@@ -1,0 +1,39 @@
+name: Update Calendar
+
+on:
+  schedule:
+    # Run every 6 hours
+    - cron: '0 */6 * * *'
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  update-calendar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install google-auth-oauthlib google-auth-httplib2 google-api-python-client
+
+      - name: Fetch calendar events
+        env:
+          GOOGLE_CALENDAR_KEY: ${{ secrets.GOOGLE_CALENDAR_KEY }}
+        run: python scripts/update_calendar.py
+
+      - name: Commit and push if changed
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add public/calendar.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update calendar events" && git push)
