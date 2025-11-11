@@ -721,26 +721,14 @@
         // Fetch calendar events
         async function loadCalendarEvents() {
             try {
-                const response = await fetch('/public/calendar.json');
+                const response = await fetch('calendar.json');
                 if (!response.ok) throw new Error('Calendar file not found');
                 
                 const data = await response.json();
                 displayCalendarEvents(data.events);
             } catch (error) {
-                console.log('Calendar events not available, trying alternate path:', error);
-                // Try alternate path
-                try {
-                    const response2 = await fetch('calendar.json');
-                    if (response2.ok) {
-                        const data = await response2.json();
-                        displayCalendarEvents(data.events);
-                    } else {
-                        throw error;
-                    }
-                } catch (e) {
-                    console.log('Could not load calendar:', e);
-                    document.getElementById('calendarContainer').innerHTML = '<div class="event-item">No calendar data</div>';
-                }
+                console.log('Could not load calendar:', error);
+                document.getElementById('calendarContainer').innerHTML = '<div class="event-item">No calendar data</div>';
             }
         }
 
