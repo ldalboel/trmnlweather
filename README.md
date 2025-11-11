@@ -1,6 +1,6 @@
-# Copenhagen Weather - TRMNL Page
+# Valby, Copenhagen Weather - TRMNL Page
 
-A minimalist weather widget for Copenhagen optimized for TRMNL eink displays (half-page, right side).
+A minimalist weather widget for Valby, Copenhagen optimized for TRMNL eink displays (half-page, right side).
 
 ## Features
 
@@ -32,22 +32,23 @@ python -m http.server 8000
 
 ## API
 
-Uses [Open-Meteo](https://open-meteo.com/) - a free, open-source weather API:
+Uses [Norwegian Meteorological Institute (met.no)](https://www.met.no/en) LocationForecast API:
 - No API key required
-- No rate limiting for reasonable use
-- WMO weather codes for accurate conditions
-- Timezone-aware data
+- Free for all use
+- High-quality European weather data
+- User-Agent required (included in code)
+- 10-day forecast data available
 
 ## Customization
 
 ### Change Location
-Edit line 228-229:
+Edit lines 228-229 in `index.html`:
 ```javascript
-const COPENHAGEN_LAT = 55.6761;
-const COPENHAGEN_LON = 12.5883;
+const COPENHAGEN_LAT = 55.7186;  // Valby, Copenhagen
+const COPENHAGEN_LON = 12.4861;  // Valby, Copenhagen
 ```
 
-To get coordinates for any city:
+To get coordinates for any location:
 - Visit [Nominatim](https://nominatim.org/) or [Google Maps](https://maps.google.com/)
 - Search for your city
 - Note the latitude and longitude

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Copenhagen Weather - TRMNL</title>
+    <title>Valby Weather - TRMNL</title>
     <style>
         * {
             margin: 0;
@@ -87,18 +87,21 @@
         .weather-today {
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 10px;
             flex: 1;
         }
 
         .weather-icon {
-            font-size: 48px;
-            min-width: 48px;
+            font-size: 64px;
+            min-width: 64px;
             text-align: center;
+            line-height: 1;
         }
 
         .weather-info {
             flex: 1;
+            text-align: center;
         }
 
         .temp {
@@ -123,85 +126,92 @@
         /* Precipitation row */
         .precipitation-row {
             width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
         }
 
         .precip-section-label {
-            margin-bottom: 3px;
+            margin-bottom: 0;
             font-size: 9px;
             font-weight: 900;
             opacity: 0.8;
+            text-align: center;
         }
 
         .hourly-precip {
             display: flex;
-            gap: 2px;
-            margin-bottom: 3px;
+            gap: 1px;
+            margin-bottom: 0;
             justify-content: space-between;
+            align-items: flex-end;
+            height: 50px;
         }
 
         .hour-slot {
             flex: 1;
-            text-align: center;
-            font-size: 7px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            height: 100%;
+            gap: 1px;
         }
 
         .hour-time {
-            font-size: 9px;
-            font-weight: 900;
-            margin-bottom: 1px;
-        }
-
-        .hour-precip {
-            font-size: 11px;
-            font-weight: 900;
-        }
-
-        .hour-chance {
-            font-size: 7px;
-            opacity: 0.7;
+            font-size: 14px;
             font-weight: 700;
+            text-align: center;
+            width: 100%;
+        }
+
+        .hour-bar {
+            width: 100%;
+            background-color: #000;
+            min-height: 2px;
+        }
+
+        .hour-dot {
+            width: 100%;
+            height: 2px;
+            background-color: #000;
+        }
+
+        .hour-precip-text {
+            font-size: 12px;
+            font-weight: 700;
+            text-align: center;
+            width: 100%;
+        }
+
+        .hour-chance-text {
+            display: none;
         }
 
         .aggregated-precip {
-            display: flex;
-            gap: 2px;
-            justify-content: space-between;
+            display: none;
         }
 
         .agg-slot {
-            flex: 1;
-            text-align: center;
-            font-size: 7px;
-        }
-
-        .agg-time {
-            font-size: 9px;
-            font-weight: 900;
-            margin-bottom: 1px;
-        }
-
-        .agg-precip {
-            font-size: 11px;
-            font-weight: 900;
-        }
-
-        .agg-chance {
-            font-size: 7px;
-            opacity: 0.7;
-            font-weight: 700;
+            display: none;
         }
 
         /* Next 3 days row */
         .forecast-row {
             display: flex;
             justify-content: space-between;
-            gap: 3px;
+            gap: 6px;
+            width: 100%;
+            align-items: center;
         }
 
         .forecast-day {
             flex: 1;
             text-align: center;
-            padding-right: 3px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 2px;
         }
 
         .forecast-day:last-child {
@@ -209,25 +219,26 @@
         }
 
         .day-name {
-            font-size: 10px;
+            font-size: 12px;
             font-weight: 900;
             text-transform: uppercase;
-            margin-bottom: 2px;
-            letter-spacing: 0.5px;
+            margin-bottom: 0;
+            letter-spacing: 1px;
         }
 
         .day-icon {
-            font-size: 28px;
-            margin: 2px 0;
+            font-size: 0;
+            margin: 0;
+            display: none;
         }
 
         .day-temp {
-            font-size: 14px;
+            font-size: 18px;
             font-weight: 900;
         }
 
         .day-temp-low {
-            font-size: 10px;
+            font-size: 12px;
             opacity: 0.7;
             font-weight: 700;
         }
@@ -298,10 +309,7 @@
             <div class="row-title">Precipitation (Next 12h)</div>
             <div class="row-content">
                 <div class="precipitation-row">
-                    <div class="precip-section-label">Next 3 Hours</div>
                     <div class="hourly-precip" id="hourlyContainer"></div>
-                    <div class="precip-section-label" style="margin-top: 4px;">Next 9 Hours</div>
-                    <div class="aggregated-precip" id="aggregatedContainer"></div>
                 </div>
             </div>
         </div>
@@ -316,17 +324,23 @@
     </div>
 
     <script>
-        const COPENHAGEN_LAT = 55.6761;
-        const COPENHAGEN_LON = 12.5883;
+        const COPENHAGEN_LAT = 55.7186;
+        const COPENHAGEN_LON = 12.4861;
+        const USER_AGENT = 'TRMNL-Weather (valby-copenhagen) https://github.com/ldalboel/trmnlweather';
 
         async function fetchWeather() {
             try {
-                // Fetch current weather and forecast with hourly data
+                // Fetch from Norwegian Meteorological Institute
                 const response = await fetch(
-                    `https://api.open-meteo.com/v1/forecast?latitude=${COPENHAGEN_LAT}&longitude=${COPENHAGEN_LON}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&hourly=precipitation,precipitation_probability&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max&timezone=Europe/Copenhagen&forecast_days=4`
+                    `https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${COPENHAGEN_LAT}&lon=${COPENHAGEN_LON}`,
+                    {
+                        headers: {
+                            'User-Agent': USER_AGENT
+                        }
+                    }
                 );
 
-                if (!response.ok) throw new Error('Weather API error');
+                if (!response.ok) throw new Error('Weather API error: ' + response.status);
 
                 const data = await response.json();
                 updateWeather(data);
@@ -337,149 +351,187 @@
             }
         }
 
-        function getWeatherIcon(weatherCode) {
-            // WMO Weather Interpretation Codes
-            if (weatherCode === 0) return '☀️'; // Clear sky
-            if (weatherCode === 1 || weatherCode === 2) return '🌤️'; // Partly cloudy
-            if (weatherCode === 3) return '☁️'; // Overcast
-            if (weatherCode === 45 || weatherCode === 48) return '🌫️'; // Foggy
-            if (weatherCode === 51 || weatherCode === 53 || weatherCode === 55) return '🌧️'; // Light drizzle
-            if (weatherCode === 61 || weatherCode === 63 || weatherCode === 65) return '🌧️'; // Rain
-            if (weatherCode === 80 || weatherCode === 81 || weatherCode === 82) return '🌧️'; // Rain showers
-            if (weatherCode === 71 || weatherCode === 73 || weatherCode === 75) return '❄️'; // Snow
-            if (weatherCode === 77) return '❄️'; // Snow grains
-            if (weatherCode === 85 || weatherCode === 86) return '❄️'; // Snow showers
-            if (weatherCode === 80 || weatherCode === 81 || weatherCode === 82) return '⛈️'; // Showers
-            if (weatherCode === 95 || weatherCode === 96 || weatherCode === 99) return '⛈️'; // Thunderstorm
-            return '🌡️'; // Default
+        function getWeatherIcon(symbolCode) {
+            // Norwegian Meteorological Institute weather symbols to emoji mapping
+            const iconMap = {
+                'clearsky_day': '☀️',
+                'clearsky_night': '🌙',
+                'cloudy': '☁️',
+                'fair_day': '⛅',
+                'fair_night': '⛅',
+                'fog': '🌫️',
+                'lightrain': '🌧️',
+                'lightrain_and_thunder': '⛈️',
+                'lightsnow': '🌨️',
+                'lightsnow_and_thunder': '⛈️',
+                'rain': '🌧️',
+                'rain_and_thunder': '⛈️',
+                'snow': '❄️',
+                'snow_and_thunder': '⛈️',
+                'heavyrain': '🌧️',
+                'heavyrain_and_thunder': '⛈️',
+                'heavysnow': '❄️',
+                'heavysnow_and_thunder': '⛈️',
+                'sleet': '🌧️',
+                'sleet_and_thunder': '⛈️',
+                'rainshower_day': '🌧️',
+                'rainshower_night': '🌧️',
+                'snowshower_day': '🌨️',
+                'snowshower_night': '🌨️',
+                'partlycloudy_day': '⛅',
+                'partlycloudy_night': '⛅'
+            };
+
+            // Extract base symbol (remove _day/_night suffix for lookup)
+            const base = symbolCode.replace(/_(day|night)/, '');
+            return iconMap[symbolCode] || iconMap[base] || '🌡️';
         }
 
-        function getWeatherDescription(weatherCode) {
+        function getWeatherDescription(symbolCode) {
             const descriptions = {
-                0: 'Clear',
-                1: 'Mostly Clear',
-                2: 'Partly Cloudy',
-                3: 'Overcast',
-                45: 'Foggy',
-                48: 'Foggy',
-                51: 'Drizzle',
-                53: 'Light Rain',
-                55: 'Drizzle',
-                61: 'Rain',
-                63: 'Heavy Rain',
-                65: 'Heavy Rain',
-                71: 'Snow',
-                73: 'Snow',
-                75: 'Heavy Snow',
-                77: 'Snow',
-                80: 'Showers',
-                81: 'Heavy Showers',
-                82: 'Violent Showers',
-                85: 'Snow Showers',
-                86: 'Heavy Snow Showers',
-                95: 'Thunderstorm',
-                96: 'Hail Storm',
-                99: 'Hail Storm'
+                'clearsky_day': 'Clear',
+                'clearsky_night': 'Clear',
+                'cloudy': 'Cloudy',
+                'fair_day': 'Fair',
+                'fair_night': 'Fair',
+                'fog': 'Fog',
+                'lightrain': 'Light Rain',
+                'lightrain_and_thunder': 'Rain & Thunder',
+                'lightsnow': 'Light Snow',
+                'lightsnow_and_thunder': 'Snow & Thunder',
+                'rain': 'Rain',
+                'rain_and_thunder': 'Rain & Thunder',
+                'snow': 'Snow',
+                'snow_and_thunder': 'Snow & Thunder',
+                'heavyrain': 'Heavy Rain',
+                'heavyrain_and_thunder': 'Heavy Rain & Thunder',
+                'heavysnow': 'Heavy Snow',
+                'heavysnow_and_thunder': 'Heavy Snow & Thunder',
+                'sleet': 'Sleet',
+                'sleet_and_thunder': 'Sleet & Thunder',
+                'rainshower_day': 'Rain Showers',
+                'rainshower_night': 'Rain Showers',
+                'snowshower_day': 'Snow Showers',
+                'snowshower_night': 'Snow Showers',
+                'partlycloudy_day': 'Partly Cloudy',
+                'partlycloudy_night': 'Partly Cloudy'
             };
-            return descriptions[weatherCode] || 'Unknown';
+            return descriptions[symbolCode] || 'Unknown';
         }
 
         function updateWeather(data) {
-            const current = data.current;
-            const daily = data.daily;
-            const hourly = data.hourly;
             const now = new Date();
+            const timeseries = data.properties.timeseries;
+
+            // Find current conditions (first entry)
+            const current = timeseries[0];
+            const currentData = current.data.instant.details;
+            const currentSymbol = current.data.next_1_hours?.summary?.symbol_code || 'unknown';
 
             // Update timestamp
             document.getElementById('timestamp').textContent = 
                 now.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 
             // Row 1: Today's Weather
-            const currentIcon = getWeatherIcon(current.weather_code);
-            const currentTemp = Math.round(current.temperature_2m);
-            const feelsLike = Math.round(current.apparent_temperature);
+            const currentIcon = getWeatherIcon(currentSymbol);
+            const currentTemp = Math.round(currentData.air_temperature);
 
             document.getElementById('currentIcon').textContent = currentIcon;
             document.getElementById('currentTemp').textContent = currentTemp;
-            document.getElementById('currentCondition').textContent = getWeatherDescription(current.weather_code);
-            document.getElementById('feelsLike').textContent = `Feels like ${feelsLike}°C`;
+            document.getElementById('currentCondition').textContent = getWeatherDescription(currentSymbol);
+            document.getElementById('feelsLike').textContent = `Wind: ${Math.round(currentData.wind_speed)} km/h`;
 
-            // Row 2: Precipitation - Next 3 hours hourly + Next 9 hours aggregated
-            const currentHour = now.getHours();
+            // Row 2: Precipitation - Next 12 hours as bars
             const hourlyContainer = document.getElementById('hourlyContainer');
-            const aggregatedContainer = document.getElementById('aggregatedContainer');
-            
             hourlyContainer.innerHTML = '';
-            aggregatedContainer.innerHTML = '';
 
-            // Next 3 hours (hourly breakdown)
-            for (let i = 0; i < 3; i++) {
-                const hourIndex = i;
-                const time = new Date(hourly.time[hourIndex]);
-                const hour = time.getHours();
-                const precip = hourly.precipitation[hourIndex];
-                const chance = hourly.precipitation_probability[hourIndex];
+            // Next 12 hours (hourly bars)
+            for (let i = 0; i < 12 && i < timeseries.length; i++) {
+                const entry = timeseries[i];
+                const entryTime = new Date(entry.time);
+                const hour = entryTime.getHours();
+                const precip = entry.data.next_1_hours?.details?.precipitation_amount || 0;
+                const chance = entry.data.next_1_hours?.details?.probability_of_precipitation || 0;
 
                 const hourSlot = document.createElement('div');
                 hourSlot.className = 'hour-slot';
-                hourSlot.innerHTML = `
-                    <div class="hour-time">${hour}:00</div>
-                    <div class="hour-precip">${precip.toFixed(1)}mm</div>
-                    <div class="hour-chance">${chance}%</div>
-                `;
-                hourlyContainer.appendChild(hourSlot);
-            }
 
-            // Next 9 hours in 3-hour slots (3h, 6h, 9h from now)
-            for (let slot = 0; slot < 3; slot++) {
-                const slotStart = 3 + (slot * 3);
-                const slotEnd = slotStart + 3;
-                
-                // Aggregate precipitation for this 3-hour slot
-                let totalPrecip = 0;
-                let maxChance = 0;
-                
-                for (let i = slotStart; i < slotEnd && i < hourly.time.length; i++) {
-                    totalPrecip += hourly.precipitation[i];
-                    maxChance = Math.max(maxChance, hourly.precipitation_probability[i]);
+                if (precip > 0) {
+                    // Show bar with precipitation data
+                    const barHeight = Math.min(Math.max(precip * 3, 8), 40); // Scale precipitation to bar height
+                    const bar = document.createElement('div');
+                    bar.className = 'hour-bar';
+                    bar.style.height = barHeight + 'px';
+
+                    const precipText = document.createElement('div');
+                    precipText.className = 'hour-precip-text';
+                    precipText.textContent = precip.toFixed(1);
+
+                    const timeText = document.createElement('div');
+                    timeText.className = 'hour-time';
+                    timeText.textContent = hour.toString().padStart(2, '0');
+
+                    hourSlot.appendChild(precipText);
+                    hourSlot.appendChild(bar);
+                    hourSlot.appendChild(timeText);
+                } else {
+                    // Show small bar for no precipitation
+                    const bar = document.createElement('div');
+                    bar.className = 'hour-bar';
+                    bar.style.height = '2px';
+
+                    const timeText = document.createElement('div');
+                    timeText.className = 'hour-time';
+                    timeText.textContent = hour.toString().padStart(2, '0');
+
+                    hourSlot.appendChild(bar);
+                    hourSlot.appendChild(timeText);
                 }
 
-                const slotTime = new Date(hourly.time[slotStart]);
-                const slotEndTime = new Date(hourly.time[slotEnd - 1]);
-                const startHour = slotTime.getHours();
-                const endHour = slotEndTime.getHours();
-
-                const aggSlot = document.createElement('div');
-                aggSlot.className = 'agg-slot';
-                aggSlot.innerHTML = `
-                    <div class="agg-time">${startHour}-${endHour}</div>
-                    <div class="agg-precip">${totalPrecip.toFixed(1)}mm</div>
-                    <div class="agg-chance">${maxChance}%</div>
-                `;
-                aggregatedContainer.appendChild(aggSlot);
+                hourlyContainer.appendChild(hourSlot);
             }
 
             // Row 3: Next 3 Days Forecast
             const forecastContainer = document.getElementById('forecastContainer');
             forecastContainer.innerHTML = '';
 
-            for (let i = 1; i <= 3; i++) {
-                const dayDate = new Date(daily.time[i]);
+            // Group by day
+            const dailyForecasts = {};
+            for (let i = 0; i < timeseries.length; i++) {
+                const entry = timeseries[i];
+                const entryTime = new Date(entry.time);
+                const dayKey = entryTime.toDateString();
+                
+                if (!dailyForecasts[dayKey]) {
+                    dailyForecasts[dayKey] = {
+                        times: [],
+                        temps: [],
+                        symbols: [],
+                        precips: []
+                    };
+                }
+                
+                dailyForecasts[dayKey].times.push(entryTime);
+                dailyForecasts[dayKey].temps.push(entry.data.instant.details.air_temperature);
+                dailyForecasts[dayKey].symbols.push(entry.data.next_1_hours?.summary?.symbol_code || 'unknown');
+                dailyForecasts[dayKey].precips.push(entry.data.next_1_hours?.details?.probability_of_precipitation || 0);
+            }
+
+            // Display next 3 days
+            const days = Object.entries(dailyForecasts).slice(1, 4);
+            for (const [dayKey, dayData] of days) {
+                const dayDate = dayData.times[0];
                 const dayName = dayDate.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
-                const maxTemp = Math.round(daily.temperature_2m_max[i]);
-                const minTemp = Math.round(daily.temperature_2m_min[i]);
-                const weatherCode = daily.weather_code[i];
-                const icon = getWeatherIcon(weatherCode);
-                const precipChance = daily.precipitation_probability_max[i];
+                const maxTemp = Math.round(Math.max(...dayData.temps));
+                const minTemp = Math.round(Math.min(...dayData.temps));
+                const maxPrecipChance = Math.max(...dayData.precips);
 
                 const forecastDay = document.createElement('div');
                 forecastDay.className = 'forecast-day';
                 forecastDay.innerHTML = `
                     <div class="day-name">${dayName}</div>
-                    <div class="day-icon">${icon}</div>
                     <div class="day-temp">${maxTemp}°</div>
                     <div class="day-temp-low">${minTemp}°</div>
-                    <div class="day-precip">${precipChance}%</div>
                 `;
                 forecastContainer.appendChild(forecastDay);
             }
