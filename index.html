@@ -1054,19 +1054,43 @@
         trainsScript.src = `trains-data.js?t=${timestamp}`;
         document.head.appendChild(trainsScript);
         
-        // Wait for scripts to load and display data
-        setTimeout(() => {
-            // Load calendar after calendar-data.js is loaded
-            if (window.calendarData) {
-                displayCalendarEvents(window.calendarData.events);
-            } else {
-                // Fallback to fetch if JS file not available
-                loadCalendarEvents();
+        // Properly wait for both scripts to load with timeout
+        function waitForDataAndDisplay() {
+            const maxWaitTime = 5000; // 5 second timeout
+            const startTime = Date.now();
+            
+            function check() {
+                const calendarReady = typeof window.calendarData !== 'undefined';
+                const trainsReady = typeof window.trainsData !== 'undefined';
+                const elapsed = Date.now() - startTime;
+                
+                if (calendarReady && trainsReady) {
+                    // Both loaded successfully
+                    displayCalendarEvents(window.calendarData.events);
+                    fetchTrains();
+                } else if (elapsed >= maxWaitTime) {
+                    // Timeout - use fallbacks
+                    if (!calendarReady) {
+                        loadCalendarEvents();
+                    } else {
+                        displayCalendarEvents(window.calendarData.events);
+                    }
+                    
+                    if (!trainsReady) {
+                        fetchTrains(); // Will show "S-tog data not loaded" or fallback
+                    } else {
+                        fetchTrains();
+                    }
+                } else {
+                    // Keep checking
+                    setTimeout(check, 50);
+                }
             }
             
-            // Load trains after trains-data.js is loaded
-            fetchTrains();
-        }, 100);
+            check();
+        }
+        
+        waitForDataAndDisplay();
     </script>
 </body>
 </html>
