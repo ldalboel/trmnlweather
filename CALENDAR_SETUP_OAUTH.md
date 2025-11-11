@@ -12,10 +12,10 @@ Your local calendar integration **works perfectly**! ✓
 1. Go to: https://github.com/ldalboel/trmnlweather/settings/secrets/actions
 2. Click **"New repository secret"**
 3. Name: `GOOGLE_CALENDAR_REFRESH_TOKEN`
-4. Value: `1//0cgX1rSMfEuJHCgYIARAAGAwSNwF-L9Iri3ligvEq2FBiijMiDclFWlw3RHiu3OYI5ZpMCToh_u_ELvWbBqrtA78Ys2xg0N3nb7o`
+4. Value: `<YOUR_REFRESH_TOKEN_HERE>` (Run `python3 scripts/get_oauth_token.py` locally to get it)
 5. Click **"Add secret"**
 
-> ⚠️ **Security Note**: This token allows access to your Google Calendar. Do NOT share it publicly. GitHub keeps it encrypted.
+> ⚠️ **Security Note**: This token allows access to your Google Calendar. Do NOT share it publicly. GitHub keeps it encrypted and never displays it.
 
 ### Step 2: Verify GitHub Actions Workflow
 The workflow `.github/workflows/update-calendar.yml` is already set up to:
@@ -31,11 +31,11 @@ Before pushing to GitHub, test locally:
 
 ```bash
 # Option 1: Using the wrapper script
-export GOOGLE_CALENDAR_REFRESH_TOKEN="1//0cgX1rSMfEuJHCgYIARAAGAwSNwF-L9Iri3ligvEq2FBiijMiDclFWlw3RHiu3OYI5ZpMCToh_u_ELvWbBqrtA78Ys2xg0N3nb7o"
+export GOOGLE_CALENDAR_REFRESH_TOKEN="<YOUR_REFRESH_TOKEN>"
 ./scripts/run_calendar_local.sh
 
 # Option 2: Direct Python call
-export GOOGLE_CALENDAR_REFRESH_TOKEN="1//0cgX1rSMfEuJHCgYIARAAGAwSNwF-L9Iri3ligvEq2FBiijMiDclFWlw3RHiu3OYI5ZpMCToh_u_ELvWbBqrtA78Ys2xg0N3nb7o"
+export GOOGLE_CALENDAR_REFRESH_TOKEN="<YOUR_REFRESH_TOKEN>"
 export GOOGLE_CLIENT_ID="1039045253345-u5t8cclb7vdi0j891tm6soef0dhek8b0.apps.googleusercontent.com"
 export GOOGLE_CLIENT_SECRET="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"
 python3 scripts/update_calendar.py
