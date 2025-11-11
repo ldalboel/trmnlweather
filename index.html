@@ -370,6 +370,31 @@
             flex: 1;
         }
 
+        .event-date-header {
+            display: flex;
+            width: 100%;
+            gap: 0;
+            background-color: #000;
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 2px;
+            font-weight: 700;
+            font-size: 14px;
+            margin-top: 0px;
+            margin-bottom: 0px;
+            line-height: 1.3;
+        }
+
+        .event-date-day {
+            flex: 0 0 50%;
+            text-align: left;
+        }
+
+        .event-date-number {
+            flex: 0 0 50%;
+            text-align: right;
+        }
+
         /* Loading and error states */
         .loading {
             display: flex;
@@ -805,6 +830,7 @@
 
             // Format dates in Danish and display - limit to 17 units
             const danishMonths = ['Januar', 'Februar', 'Marts', 'April', 'Maj', 'Juni', 'Juli', 'Augusti', 'September', 'Oktober', 'November', 'December'];
+            const danishDays = ['Søndag', 'Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag'];
             
             let unitCount = 0;
             const maxUnits = 18;
@@ -822,22 +848,23 @@
                 const dateObj = new Date(dateKey + 'T00:00:00Z');
                 const day = dateObj.getUTCDate();
                 const month = danishMonths[dateObj.getUTCMonth()];
-                const year = dateObj.getUTCFullYear();
-                const dateHeaderStr = `${day} ${month} ${year}`;
+                const dayOfWeek = danishDays[dateObj.getUTCDay()];
+                const dateHeaderStr = `${day} ${month}`;
 
                 // Add date header (counts as 1 unit)
                 const dateHeader = document.createElement('div');
                 dateHeader.className = 'event-date-header';
-                dateHeader.style.fontWeight = '700';
-                dateHeader.style.fontSize = '14px';
-                dateHeader.style.marginTop = '0px';
-                dateHeader.style.marginBottom = '0px';
-                dateHeader.style.backgroundColor = '#000';
-                dateHeader.style.color = '#fff';
-                dateHeader.style.padding = '4px 8px';
-                dateHeader.style.borderRadius = '2px';
-                dateHeader.style.lineHeight = '1.3';
-                dateHeader.textContent = dateHeaderStr;
+                
+                const dayCol = document.createElement('div');
+                dayCol.className = 'event-date-day';
+                dayCol.textContent = dayOfWeek;
+                
+                const dateCol = document.createElement('div');
+                dateCol.className = 'event-date-number';
+                dateCol.textContent = dateHeaderStr;
+                
+                dateHeader.appendChild(dayCol);
+                dateHeader.appendChild(dateCol);
                 container.appendChild(dateHeader);
                 unitCount++;
 
