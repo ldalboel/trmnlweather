@@ -2,8 +2,8 @@ name: Update Calendar
 
 on:
   schedule:
-    # Run every 8 minutes
-    - cron: '*/8 * * * *'
+    # Run every 6 minutes
+    - cron: '*/6 * * * *'
   # Allow manual trigger
   workflow_dispatch:
 
