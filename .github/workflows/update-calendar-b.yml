@@ -38,9 +38,12 @@ jobs:
           TZ: Europe/Copenhagen
         run: python scripts/update_trains.py
 
+      - name: Generate static HTML with embedded data
+        run: python scripts/generate_static_html.py
+
       - name: Commit and push if changed
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add calendar.json calendar-data.js trains-data.js
+          git add calendar.json calendar-data.js trains-data.js index.html
           git diff --quiet && git diff --staged --quiet || (git commit -m "Update calendar events and train departures" && git pull --rebase origin main && git push origin main)
