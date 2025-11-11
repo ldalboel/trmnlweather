@@ -38,7 +38,7 @@
         /* Three vertical rows */
         .row {
             display: flex;
-            border-bottom: 1px solid #cccccc;
+            border-bottom: 0;
             flex: 1;
         }
 
@@ -84,52 +84,57 @@
         }
 
         .location-title {
-            font-size: 12px;
+            font-size: 0px;
             font-weight: 700;
-            margin-bottom: 4px;
+            margin-bottom: 0px;
             line-height: 1.1;
             letter-spacing: 0.5px;
-            opacity: 0.8;
+            opacity: 0;
+            display: none;
         }
 
         .temp {
-            font-size: 56px;
+            font-size: 80px;
             font-weight: 700;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
             line-height: 1;
         }
 
         .condition {
-            font-size: 11px;
-            margin-bottom: 6px;
+            font-size: 0px;
+            margin-bottom: 0px;
             font-weight: 500;
-            opacity: 0.9;
+            opacity: 0;
+            display: none;
         }
 
         .weather-details {
-            font-size: 10px;
-            opacity: 0.85;
-            line-height: 1.3;
-            font-weight: 500;
+            font-size: 20px;
+            opacity: 1;
+            line-height: 1.4;
+            font-weight: 600;
         }
 
         .detail-line {
-            margin: 1px 0;
+            margin: 2px 0;
         }
 
         /* Row 2: Precipitation */
         .row-precipitation {
             display: flex;
             flex-direction: column;
-            padding: 16px 20px;
+            padding: 20px 20px;
         }
 
         .section-title {
-            font-size: 12px;
+            font-size: 0px;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 0px;
             text-align: center;
             letter-spacing: 0.5px;
+            display: none;
+            height: 0;
+            padding: 0;
         }
 
         .precipitation-row {
@@ -161,7 +166,7 @@
         }
 
         .hour-time {
-            font-size: 8px;
+            font-size: 16px;
             font-weight: 500;
             text-align: center;
             width: 100%;
@@ -177,7 +182,7 @@
         }
 
         .hour-precip-text {
-            font-size: 7px;
+            font-size: 14px;
             font-weight: 500;
             text-align: center;
             width: 100%;
@@ -189,16 +194,19 @@
         .row-forecast {
             display: flex;
             flex-direction: column;
-            padding: 12px 20px;
+            padding: 20px 20px;
             justify-content: flex-start;
         }
 
         .forecast-title {
-            font-size: 12px;
+            font-size: 0px;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 0px;
             text-align: center;
             letter-spacing: 0.5px;
+            display: none;
+            height: 0;
+            padding: 0;
         }
 
         .forecast-row {
@@ -219,7 +227,7 @@
         }
 
         .day-name {
-            font-size: 10px;
+            font-size: 20px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -243,15 +251,15 @@
         }
 
         .day-temp {
-            font-size: 11px;
+            font-size: 22px;
             font-weight: 700;
             line-height: 1.1;
         }
 
         .day-temp-range {
-            font-size: 10px;
+            font-size: 20px;
             opacity: 0.8;
-            font-weight: 500;
+            font-weight: 600;
         }
 
         /* Loading and error states */
@@ -458,30 +466,33 @@
             document.getElementById('currentTemp').textContent = currentTemp;
             document.getElementById('currentCondition').textContent = getWeatherDescription(currentSymbol);
             
-            // Get H/L temps for today
+            // Get H/L temps for today and total daily precipitation
             const today = new Date(now);
             today.setHours(0, 0, 0, 0);
             const tomorrow = new Date(today);
             tomorrow.setDate(tomorrow.getDate() + 1);
             
             let todayTemps = [];
+            let dailyPrecip = 0;
             for (const entry of timeseries) {
                 const entryTime = new Date(entry.time);
                 if (entryTime >= today && entryTime < tomorrow) {
                     todayTemps.push(entry.data.instant.details.air_temperature);
+                    dailyPrecip += entry.data.next_1_hours?.details?.precipitation_amount || 0;
                 }
             }
             
             const highTemp = todayTemps.length > 0 ? Math.round(Math.max(...todayTemps)) : currentTemp;
             const lowTemp = todayTemps.length > 0 ? Math.round(Math.min(...todayTemps)) : currentTemp;
+            const precipDisplay = dailyPrecip > 0 ? `${dailyPrecip.toFixed(1)}mm` : '−';
             
-            document.getElementById('feelsLike').innerHTML = `H: ${highTemp}° L: ${lowTemp}°<br>Wind: ${windSpeed} km/h`;
+            document.getElementById('feelsLike').innerHTML = `H: ${highTemp}° L: ${lowTemp}°<br>Wind: ${windSpeed} km/h<br>Rain: ${precipDisplay}`;
 
             // Precipitation - Next 24 hours
             const hourlyContainer = document.getElementById('hourlyContainer');
             hourlyContainer.innerHTML = '';
 
-            for (let i = 0; i < 24 && i < timeseries.length; i++) {
+            for (let i = 0; i < 12 && i < timeseries.length; i++) {
                 const entry = timeseries[i];
                 const entryTime = new Date(entry.time);
                 const hour = entryTime.getHours().toString().padStart(2, '0');
@@ -557,6 +568,21 @@
                 const minTemp = Math.round(Math.min(...dayData.temps));
                 const primarySymbol = dayData.symbols[Math.floor(dayData.symbols.length / 2)];
                 const dayIcon = getWeatherIcon(primarySymbol);
+                
+                // Calculate total precipitation for the day
+                const startOfDay = new Date(dayData.date);
+                startOfDay.setHours(0, 0, 0, 0);
+                const endOfDay = new Date(startOfDay);
+                endOfDay.setDate(endOfDay.getDate() + 1);
+                
+                let dayPrecip = 0;
+                for (const entry of timeseries) {
+                    const entryTime = new Date(entry.time);
+                    if (entryTime >= startOfDay && entryTime < endOfDay) {
+                        dayPrecip += entry.data.next_1_hours?.details?.precipitation_amount || 0;
+                    }
+                }
+                const precipDisplay = dayPrecip > 0 ? `${dayPrecip.toFixed(1)}mm` : '−';
 
                 const forecastDay = document.createElement('div');
                 forecastDay.className = 'forecast-day';
@@ -564,6 +590,7 @@
                     <div class="day-name">${dayName}</div>
                     <div class="day-icon">${dayIcon}</div>
                     <div class="day-temp">${maxTemp}° ${minTemp}°</div>
+                    <div class="day-temp-range">${precipDisplay}</div>
                 `;
                 forecastContainer.appendChild(forecastDay);
             }
