@@ -13,9 +13,13 @@ def generate_static_html():
     
     script_dir = Path(__file__).parent.parent
     
-    # Read the base HTML template
-    html_file = script_dir / 'index.html'
-    with open(html_file, 'r', encoding='utf-8') as f:
+    # Read the template HTML (NOT the generated index.html)
+    template_file = script_dir / 'index.template.html'
+    if not template_file.exists():
+        print("Error: index.template.html not found")
+        return
+    
+    with open(template_file, 'r', encoding='utf-8') as f:
         html_content = f.read()
     
     # Read trains data
@@ -46,64 +50,17 @@ def generate_static_html():
                 except json.JSONDecodeError:
                     print("Warning: Could not parse calendar-data.js")
     
-    # Find the data loading script section and replace it with embedded data
-    # Find the section that loads trains-data.js and calendar-data.js
-    old_script = '''    <script>
-        // Add cache-busting timestamp to force fresh data from GitHub Pages
-        const timestamp = new Date().getTime();
-        
-        // Load calendar data
-        const calendarScript = document.createElement('script');
-        calendarScript.src = `calendar-data.js?t=${timestamp}`;
-        document.head.appendChild(calendarScript);
-        
-        // Load train data
-        const trainsScript = document.createElement('script');
-        trainsScript.src = `trains-data.js?t=${timestamp}`;
-        document.head.appendChild(trainsScript);
-        
-        // Properly wait for both scripts to load with timeout
-        function waitForDataAndDisplay() {
-            const maxWaitTime = 5000; // 5 second timeout
-            const startTime = Date.now();
-            
-            function check() {
-                const calendarReady = typeof window.calendarData !== 'undefined';
-                const trainsReady = typeof window.trainsData !== 'undefined';
-                const elapsed = Date.now() - startTime;
-                
-                if (calendarReady && trainsReady) {
-                    // Both loaded successfully
-                    displayCalendarEvents(window.calendarData.events);
-                    fetchTrains();
-                } else if (elapsed >= maxWaitTime) {
-                    // Timeout - use fallbacks
-                    if (!calendarReady) {
-                        loadCalendarEvents();
-                    } else {
-                        displayCalendarEvents(window.calendarData.events);
-                    }
-                    
-                    if (!trainsReady) {
-                        fetchTrains(); // Will show "S-tog data not loaded" or fallback
-                    } else {
-                        fetchTrains();
-                    }
-                } else {
-                    // Keep checking
-                    setTimeout(check, 50);
-                }
-            }
-            
-            check();
-        }
-        
-        waitForDataAndDisplay();
+    # Find the placeholder and replace it with embedded data
+    old_placeholder = '''    <script>
+        // PLACEHOLDER: Data will be embedded here by generate_static_html.py
+        // This ensures simple browsers (like TRMNL) get fresh data on every visit
+        window.trainsData = null;
+        window.calendarData = null;
     </script>'''
     
-    # New embedded script
+    # New embedded script with actual data
     new_script = f'''    <script>
-        // Embed data directly to support simple browsers (like TRMNL) that don't wait for async script loads
+        // Embedded data for simple browsers (like TRMNL) that don't wait for async script loads
         window.trainsData = {json.dumps(trains_data)};
         window.calendarData = {json.dumps(calendar_data)};
         
@@ -119,8 +76,8 @@ def generate_static_html():
         }}
     </script>'''
     
-    # Replace in HTML
-    html_content = html_content.replace(old_script, new_script)
+    # Replace placeholder in HTML
+    html_content = html_content.replace(old_placeholder, new_script)
     
     # Write the generated HTML
     output_file = script_dir / 'index.html'
