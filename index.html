@@ -42,7 +42,6 @@
             display: flex;
             flex-direction: column;
             gap: 0;
-            border-right: 2px solid #000;
             overflow: hidden;
         }
 
@@ -73,9 +72,9 @@
             display: flex;
             flex-direction: row;
             gap: 0;
-            padding: 0;
+            padding: 16px 0 0 0;
             flex: 0 0 auto;
-            min-height: 160px;
+            min-height: 110px;
         }
 
         .today-icon-section {
@@ -84,12 +83,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 12px;
+            padding: 6px;
         }
 
         .weather-icon {
-            width: 100px;
-            height: 100px;
+            width: 70px;
+            height: 70px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -109,7 +108,7 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 12px;
+            padding: 6px;
         }
 
         .location-title {
@@ -123,9 +122,9 @@
         }
 
         .temp {
-            font-size: 60px;
+            font-size: 48px;
             font-weight: 700;
-            margin-bottom: 2px;
+            margin-bottom: 0px;
             line-height: 1;
         }
 
@@ -138,23 +137,23 @@
         }
 
         .weather-details {
-            font-size: 16px;
+            font-size: 13px;
             opacity: 1;
-            line-height: 1.3;
+            line-height: 1.2;
             font-weight: 600;
         }
 
         .detail-line {
-            margin: 1px 0;
+            margin: 0px 0;
         }
 
         /* Row 2: Precipitation */
         .row-precipitation {
             display: flex;
             flex-direction: column;
-            padding: 12px 12px;
+            padding: 8px 8px;
             flex: 0 0 auto;
-            min-height: 140px;
+            min-height: 100px;
             justify-content: flex-start;
         }
 
@@ -182,7 +181,7 @@
             gap: 1px;
             justify-content: space-between;
             align-items: flex-end;
-            height: 75px;
+            height: 60px;
             width: 100%;
         }
 
@@ -193,12 +192,12 @@
             align-items: center;
             justify-content: flex-end;
             height: 100%;
-            gap: 2px;
+            gap: 1px;
             min-width: 0;
         }
 
         .hour-time {
-            font-size: 11px;
+            font-size: 9px;
             font-weight: 400;
             text-align: center;
             width: 100%;
@@ -216,7 +215,7 @@
         }
 
         .hour-precip-text {
-            font-size: 10px;
+            font-size: 8px;
             font-weight: 500;
             text-align: center;
             width: 100%;
@@ -229,10 +228,10 @@
         .row-forecast {
             display: flex;
             flex-direction: column;
-            padding: 12px 12px;
+            padding: 8px 8px;
             justify-content: flex-start;
             flex: 0 0 auto;
-            min-height: 140px;
+            min-height: 100px;
         }
 
         .forecast-title {
@@ -249,7 +248,7 @@
         .forecast-row {
             display: flex;
             justify-content: space-around;
-            gap: 8px;
+            gap: 4px;
             width: 100%;
             align-items: flex-start;
         }
@@ -260,22 +259,22 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
-            gap: 2px;
+            gap: 1px;
         }
 
         .day-name {
-            font-size: 16px;
+            font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
             line-height: 1;
         }
 
         .day-icon {
-            width: 24px;
-            height: 24px;
+            width: 18px;
+            height: 18px;
             line-height: 1;
-            margin: 2px auto;
+            margin: 0px auto;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -288,18 +287,78 @@
         }
 
         .day-temp {
-            font-size: 18px;
+            font-size: 14px;
             font-weight: 700;
-            line-height: 1.1;
+            line-height: 1;
         }
 
         .day-temp-range {
-            font-size: 16px;
+            font-size: 11px;
             opacity: 0.8;
-            font-weight: 600;
+            font-weight: 500;
         }
 
-        /* Row 4: Calendar */
+        /* Row 4: S-train departures */
+        .row-trains {
+            display: flex;
+            flex-direction: column;
+            padding: 8px 8px;
+            flex: 0 0 auto;
+            min-height: 80px;
+            justify-content: flex-start;
+        }
+
+        .trains-container {
+            display: flex;
+            flex-direction: row;
+            gap: 6px;
+            width: 100%;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+            align-content: flex-start;
+        }
+
+        .train-departure {
+            /* 4 badges per row, 2 rows, full width */
+            flex: 0 0 calc(25% - 5px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            background-color: #f5f5f5;
+            padding: 6px 4px;
+            border-radius: 3px;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+
+        .train-line {
+            font-size: 22px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .train-time {
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        /* Make the destination (direction) as prominent as the time */
+        .train-destination {
+            font-size: 11.7px;
+            font-weight: 400;
+            opacity: 0.7;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
+        /* Row 5: Calendar */
         .row-calendar {
             display: flex;
             flex-direction: column;
@@ -458,6 +517,28 @@
                 <div class="forecast-title">Next 3 Days</div>
                 <div class="forecast-row" id="forecastContainer">
                     <div class="forecast-day">Loading...</div>
+                </div>
+            </div>
+
+            <!-- Row 4: S-train Departures -->
+            <div class="row row-trains">
+                <div class="trains-container" id="trainsContainer">
+                    <div class="train-departure">
+                        <div class="train-line">S-tog</div>
+                        <div class="train-time">--:--</div>
+                    </div>
+                    <div class="train-departure">
+                        <div class="train-line">S-tog</div>
+                        <div class="train-time">--:--</div>
+                    </div>
+                    <div class="train-departure">
+                        <div class="train-line">S-tog</div>
+                        <div class="train-time">--:--</div>
+                    </div>
+                    <div class="train-departure">
+                        <div class="train-line">S-tog</div>
+                        <div class="train-time">--:--</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -748,6 +829,62 @@
         // Refresh every 30 minutes
         setInterval(fetchWeather, 30 * 60 * 1000);
 
+        // Fetch S-train departures from Danshøj
+        async function fetchTrains() {
+            try {
+                // Load from trains-data.js if available
+                if (window.trainsData) {
+                    displayTrains(window.trainsData.departures || []);
+                } else {
+                    const container = document.getElementById('trainsContainer');
+                    container.innerHTML = '<div style="text-align: center; width: 100%;">S-tog data not loaded</div>';
+                }
+            } catch (error) {
+                console.log('Could not fetch trains:', error);
+                const container = document.getElementById('trainsContainer');
+                container.innerHTML = '<div style="text-align: center; width: 100%;">S-tog unavailable</div>';
+            }
+        }
+
+        function displayTrains(departures) {
+            const container = document.getElementById('trainsContainer');
+            container.innerHTML = '';
+            
+            if (!departures || departures.length === 0) {
+                container.innerHTML = '<div style="text-align: center; width: 100%;">No trains</div>';
+                return;
+            }
+            
+            // Show up to 8 departures
+            departures.slice(0, 8).forEach(dep => {
+                const depDiv = document.createElement('div');
+                depDiv.className = 'train-departure';
+                
+                const line = document.createElement('div');
+                line.className = 'train-line';
+                line.textContent = dep.line || 'S';
+                
+                const time = document.createElement('div');
+                time.className = 'train-time';
+                time.textContent = dep.time;
+                
+                const destination = document.createElement('div');
+                destination.className = 'train-destination';
+                destination.textContent = dep.destination || '';
+                
+                depDiv.appendChild(line);
+                depDiv.appendChild(time);
+                depDiv.appendChild(destination);
+                container.appendChild(depDiv);
+            });
+        }
+
+        // Fetch trains on page load
+        fetchTrains();
+
+        // Refresh trains every 2 minutes
+        setInterval(fetchTrains, 2 * 60 * 1000);
+
         // Fetch calendar events
         async function loadCalendarEvents() {
             try {
@@ -906,6 +1043,7 @@
         loadCalendarEvents();
     </script>
     <script src="calendar-data.js"></script>
+    <script src="trains-data.js"></script>
     <script>
         // Load calendar after calendar-data.js is loaded
         if (window.calendarData) {
@@ -914,6 +1052,9 @@
             // Fallback to fetch if JS file not available
             loadCalendarEvents();
         }
+        
+        // Load trains after trains-data.js is loaded
+        fetchTrains();
     </script>
 </body>
 </html>
