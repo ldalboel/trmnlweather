@@ -13,12 +13,17 @@ from googleapiclient.discovery import build
 
 # Get the refresh token from environment
 REFRESH_TOKEN = os.environ.get('GOOGLE_CALENDAR_REFRESH_TOKEN')
-CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '1234567890-abcdefghijklmnopqrstuvwxyz.apps.googleusercontent.com')
-CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET', 'GOCSPX-fake-secret')
+CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
+CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
 
 if not REFRESH_TOKEN:
     print("Error: GOOGLE_CALENDAR_REFRESH_TOKEN environment variable not set")
     print("Run: python3 scripts/get_oauth_token.py")
+    exit(1)
+
+if not CLIENT_ID or not CLIENT_SECRET:
+    print("Error: GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET environment variables not set")
+    print("These should be set as GitHub Secrets or environment variables")
     exit(1)
 
 try:
