@@ -19,9 +19,10 @@ def fetch_train_departures():
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
         }
         
-        # Build URLs with current date and time
-        today = datetime.now().strftime('%d.%m.%Y')
-        current_time = datetime.now().strftime('%H:%M')
+        # Build URLs with current date and time plus 5 minutes (handles day roll-over)
+        target_dt = datetime.now() + timedelta(minutes=5)
+        today = target_dt.strftime('%d.%m.%Y')
+        current_time = target_dt.strftime('%H:%M')
         
         # URL 1: Trains from Danshøj
         url1 = f'https://webapp.rejseplanen.dk/bin/stboard.exe/mn?L=vs_rp4.vs_dsb&ml=m&L=vs_rp4.vs_dsb&protocol=https:&ml=m&boardType=dep&input=Dansh%F8j%20St.%238600742&dirInput=K%F8benhavn%20H%238600626&productsFilter=111111111111&maxStops=0&maxJourneys=7&selectDate=period&dateBegin={today}&dateEnd={today}&time={current_time}&currentSqResultsContentType=STATIONBOARD&start=yes&'
