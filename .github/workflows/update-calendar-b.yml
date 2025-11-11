@@ -1,9 +1,9 @@
-name: Update Calendar and Trains (Set A)
+name: Update Calendar and Trains (Set B)
 
 on:
   schedule:
-    # Run at :00, :15, :30, :45 every hour (every 15 minutes, Set A)
-    - cron: '0,15,30,45 * * * *'
+    # Run at :07, :22, :37, :52 every hour (every 15 minutes, Set B - offset by 7 min)
+    - cron: '7,22,37,52 * * * *'
   # Allow manual trigger
   workflow_dispatch:
 
