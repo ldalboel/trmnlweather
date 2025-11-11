@@ -10,3 +10,15 @@ Thumbs.db
 
 # Dependencies
 node_modules/
+
+# Google Calendar OAuth credentials (NEVER commit these!)
+credentials.json
+token.json
+*.json.bak
+
+# Python cache
+__pycache__/
+*.pyc
+.Python
+env/
+venv/

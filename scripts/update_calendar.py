@@ -1,51 +1,87 @@
 #!/usr/bin/env python3
 """
 Fetch Google Calendar events and save to JSON file.
+Uses OAuth 2.0 user credentials instead of service accounts.
 """
 
 import json
 import os
 from datetime import datetime, timedelta
-from google.oauth2 import service_account
+from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 
-# Get the service account key from environment
-KEY_JSON = os.environ.get('GOOGLE_CALENDAR_KEY')
+# Get the refresh token from environment
+REFRESH_TOKEN = os.environ.get('GOOGLE_CALENDAR_REFRESH_TOKEN')
+CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '1234567890-abcdefghijklmnopqrstuvwxyz.apps.googleusercontent.com')
+CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET', 'GOCSPX-fake-secret')
 
-if not KEY_JSON:
-    print("Error: GOOGLE_CALENDAR_KEY environment variable not set")
+if not REFRESH_TOKEN:
+    print("Error: GOOGLE_CALENDAR_REFRESH_TOKEN environment variable not set")
+    print("Run: python3 scripts/get_oauth_token.py")
     exit(1)
 
-# Parse the key
-key_dict = json.loads(KEY_JSON)
-
-# Set up authentication
-credentials = service_account.Credentials.from_service_account_info(
-    key_dict,
-    scopes=['https://www.googleapis.com/auth/calendar.readonly']
-)
+try:
+    # Create credentials from refresh token
+    creds = Credentials(
+        token=None,
+        refresh_token=REFRESH_TOKEN,
+        token_uri='https://oauth2.googleapis.com/token',
+        client_id=CLIENT_ID,
+        client_secret=CLIENT_SECRET
+    )
+    
+    # Refresh to get a valid access token
+    creds.refresh(Request())
+    print(f"✓ Successfully authenticated with Google Calendar")
+    
+except Exception as e:
+    print(f"Error authenticating: {e}")
+    print("Make sure GOOGLE_CALENDAR_REFRESH_TOKEN is set correctly")
+    exit(1)
 
 # Create the Calendar API client
-service = build('calendar', 'v3', credentials=credentials)
+service = build('calendar', 'v3', credentials=creds)
 
 # Try to get calendar list to see what calendars are accessible
-print("Available calendars:")
+print("\n=== Available calendars ===")
 try:
     calendar_list = service.calendarList().list().execute()
     calendars = calendar_list.get('items', [])
-    for cal in calendars:
-        print(f"  - {cal['summary']} ({cal['id']})")
     
     if not calendars:
-        print("  No calendars found! Make sure you shared your calendar with the service account.")
+        print("ERROR: No calendars found!")
+        print("This usually means the GOOGLE_CALENDAR_REFRESH_TOKEN is invalid or expired.")
+        print("Run: python3 scripts/get_oauth_token.py")
+        # Create empty calendar.json and exit
+        os.makedirs('public', exist_ok=True)
+        with open('public/calendar.json', 'w') as f:
+            json.dump({'updated': datetime.utcnow().isoformat(), 'events': []}, f)
         exit(1)
+    else:
+        for i, cal in enumerate(calendars):
+            print(f"{i+1}. {cal.get('summary', 'Unnamed')} ({cal['id']})")
+            print(f"   Primary: {cal.get('primary', False)}")
     
-    # Use the first calendar found (usually the primary one)
-    calendar_id = calendars[0]['id']
-    print(f"\nUsing calendar: {calendar_id}")
+    # Use the primary calendar (your main calendar)
+    primary_cal = None
+    for cal in calendars:
+        if cal.get('primary', False):
+            primary_cal = cal
+            break
+    
+    if primary_cal:
+        calendar_id = primary_cal['id']
+        print(f"\n=== Using primary calendar: {primary_cal.get('summary', 'Unnamed')} ({calendar_id}) ===")
+    else:
+        # Fallback to first calendar if no primary found
+        calendar_id = calendars[0]['id']
+        print(f"\n=== Using calendar: {calendars[0].get('summary', 'Unnamed')} ({calendar_id}) ===")
+    
 except Exception as e:
     print(f"Error listing calendars: {e}")
+    import traceback
+    traceback.print_exc()
     exit(1)
 
 # Time range: today to 30 days from now
@@ -53,7 +89,8 @@ now = datetime.utcnow()
 time_min = now.isoformat() + 'Z'
 time_max = (now + timedelta(days=30)).isoformat() + 'Z'
 
-print(f"Fetching events from {time_min} to {time_max}")
+print(f"\n=== Fetching events ===")
+print(f"Time range: {time_min} to {time_max}")
 
 try:
     # Fetch events
@@ -67,7 +104,6 @@ try:
     ).execute()
     
     events = events_result.get('items', [])
-    
     print(f"Found {len(events)} events")
     
     # Process events into a simpler format
@@ -90,6 +126,7 @@ try:
         }
         
         calendar_data['events'].append(event_obj)
+        print(f"  - {event_obj['title']} ({start})")
     
     # Ensure output directory exists
     os.makedirs('public', exist_ok=True)
@@ -98,11 +135,12 @@ try:
     with open('public/calendar.json', 'w') as f:
         json.dump(calendar_data, f, indent=2)
     
-    print(f"Successfully saved {len(events)} events to public/calendar.json")
+    print(f"\n✓ Successfully saved {len(events)} events to public/calendar.json")
     
 except Exception as e:
-    print(f"Error fetching calendar: {e}")
+    print(f"\n✗ Error fetching calendar: {e}")
     import traceback
     traceback.print_exc()
     exit(1)
+
 

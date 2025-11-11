@@ -31,8 +31,30 @@
             width: 100%;
             height: 100%;
             display: flex;
+            flex-direction: row;
+            gap: 0;
+        }
+
+        /* Left column: Weather */
+        .weather-column {
+            flex: 0 0 50%;
+            width: 50%;
+            display: flex;
             flex-direction: column;
             gap: 0;
+            border-right: 2px solid #000;
+            overflow: hidden;
+        }
+
+        /* Right column: Calendar */
+        .calendar-column {
+            flex: 0 0 50%;
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            padding: 16px 20px;
+            overflow: hidden;
         }
 
         /* Three vertical rows */
@@ -51,7 +73,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 16px 20px;
+            padding: 12px 12px;
+            flex: 0 0 auto;
+            min-height: 160px;
         }
 
         .today-icon-section {
@@ -59,12 +83,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 20px;
+            margin-right: 12px;
         }
 
         .weather-icon {
-            width: 120px;
-            height: 120px;
+            width: 100px;
+            height: 100px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -94,9 +118,9 @@
         }
 
         .temp {
-            font-size: 80px;
+            font-size: 60px;
             font-weight: 700;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
             line-height: 1;
         }
 
@@ -109,21 +133,24 @@
         }
 
         .weather-details {
-            font-size: 20px;
+            font-size: 16px;
             opacity: 1;
-            line-height: 1.4;
+            line-height: 1.3;
             font-weight: 600;
         }
 
         .detail-line {
-            margin: 2px 0;
+            margin: 1px 0;
         }
 
         /* Row 2: Precipitation */
         .row-precipitation {
             display: flex;
             flex-direction: column;
-            padding: 20px 20px;
+            padding: 12px 12px;
+            flex: 0 0 auto;
+            min-height: 140px;
+            justify-content: flex-start;
         }
 
         .section-title {
@@ -140,7 +167,7 @@
         .precipitation-row {
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: 0px;
             flex: 1;
             justify-content: flex-start;
         }
@@ -150,7 +177,7 @@
             gap: 1px;
             justify-content: space-between;
             align-items: flex-end;
-            height: 80px;
+            height: 75px;
             width: 100%;
         }
 
@@ -161,41 +188,46 @@
             align-items: center;
             justify-content: flex-end;
             height: 100%;
-            gap: 1px;
+            gap: 2px;
             min-width: 0;
         }
 
         .hour-time {
-            font-size: 16px;
-            font-weight: 500;
+            font-size: 11px;
+            font-weight: 400;
             text-align: center;
             width: 100%;
             order: 3;
             line-height: 1;
+            flex-shrink: 0;
         }
 
         .hour-bar {
-            width: 100%;
+            width: 80%;
             background-color: #000;
-            min-height: 1px;
+            min-height: 2px;
             order: 2;
+            flex-shrink: 0;
         }
 
         .hour-precip-text {
-            font-size: 14px;
+            font-size: 10px;
             font-weight: 500;
             text-align: center;
             width: 100%;
             order: 1;
             line-height: 1;
+            flex-shrink: 0;
         }
 
         /* Row 3: Next 3 days */
         .row-forecast {
             display: flex;
             flex-direction: column;
-            padding: 20px 20px;
+            padding: 12px 12px;
             justify-content: flex-start;
+            flex: 0 0 auto;
+            min-height: 140px;
         }
 
         .forecast-title {
@@ -212,7 +244,7 @@
         .forecast-row {
             display: flex;
             justify-content: space-around;
-            gap: 16px;
+            gap: 8px;
             width: 100%;
             align-items: flex-start;
         }
@@ -223,11 +255,11 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
-            gap: 3px;
+            gap: 2px;
         }
 
         .day-name {
-            font-size: 20px;
+            font-size: 16px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -235,8 +267,8 @@
         }
 
         .day-icon {
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             line-height: 1;
             margin: 2px auto;
             display: flex;
@@ -251,13 +283,13 @@
         }
 
         .day-temp {
-            font-size: 22px;
+            font-size: 18px;
             font-weight: 700;
             line-height: 1.1;
         }
 
         .day-temp-range {
-            font-size: 20px;
+            font-size: 16px;
             opacity: 0.8;
             font-weight: 600;
         }
@@ -266,34 +298,46 @@
         .row-calendar {
             display: flex;
             flex-direction: column;
-            padding: 20px 20px;
+            padding: 0;
             justify-content: flex-start;
-            overflow-y: auto;
+            overflow: hidden;
+            flex: 1;
         }
 
         .calendar-title {
-            font-size: 0px;
+            font-size: 16px;
             font-weight: 700;
-            margin-bottom: 0px;
-            text-align: center;
+            margin-bottom: 10px;
+            text-align: left;
             letter-spacing: 0.5px;
             display: none;
+            padding: 0;
         }
 
         .calendar-events {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 4px;
             flex: 1;
             overflow-y: auto;
+            padding-right: 4px;
+            align-items: stretch;
+            text-align: left;
         }
 
         .event-item {
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 500;
             line-height: 1.3;
-            padding: 6px 0;
-            border-bottom: 1px solid #e0e0e0;
+            padding: 0px;
+            border-bottom: 0;
+            display: flex;
+            flex-direction: row;
+            gap: 8px;
+            width: 100%;
+            justify-content: space-between;
+            align-items: baseline;
+            min-height: 1.3em;
         }
 
         .event-item:last-child {
@@ -301,14 +345,24 @@
         }
 
         .event-time {
-            font-size: 12px;
+            font-size: 11.7px;
             opacity: 0.7;
             font-weight: 400;
+            line-height: 1.3;
+            flex-shrink: 0;
+            text-align: right;
         }
 
         .event-title {
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 600;
+            line-height: 1.3;
+            word-break: break-word;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
         }
 
         /* Loading and error states */
@@ -344,42 +398,47 @@
 </head>
 <body>
     <div class="container">
-        <!-- Row 1: Today's Weather -->
-        <div class="row row-today">
-            <div class="today-icon-section">
-                <div class="weather-icon" id="currentIcon"></div>
+        <!-- Left Column: Weather -->
+        <div class="weather-column">
+            <!-- Row 1: Today's Weather -->
+            <div class="row row-today">
+                <div class="today-icon-section">
+                    <div class="weather-icon" id="currentIcon"></div>
+                </div>
+                <div class="today-details-section">
+                    <div class="location-title">Today in Copenhagen</div>
+                    <div class="temp"><span id="currentTemp">--</span>°C</div>
+                    <div class="condition" id="currentCondition">Loading...</div>
+                    <div class="weather-details">
+                        <div class="detail-line" id="feelsLike"></div>
+                    </div>
+                </div>
             </div>
-            <div class="today-details-section">
-                <div class="location-title">Today in Copenhagen</div>
-                <div class="temp"><span id="currentTemp">--</span>°C</div>
-                <div class="condition" id="currentCondition">Loading...</div>
-                <div class="weather-details">
-                    <div class="detail-line" id="feelsLike"></div>
+
+            <!-- Row 2: Precipitation (12h) -->
+            <div class="row row-precipitation">
+                <div class="section-title">Rain next 12h</div>
+                <div class="precipitation-row">
+                    <div class="hourly-precip" id="hourlyContainer"></div>
+                </div>
+            </div>
+
+            <!-- Row 3: Next 3 Days -->
+            <div class="row row-forecast">
+                <div class="forecast-title">Next 3 Days</div>
+                <div class="forecast-row" id="forecastContainer">
+                    <div class="forecast-day">Loading...</div>
                 </div>
             </div>
         </div>
 
-        <!-- Row 2: Precipitation (24h) -->
-        <div class="row row-precipitation">
-            <div class="section-title">Rain next 24h</div>
-            <div class="precipitation-row">
-                <div class="hourly-precip" id="hourlyContainer"></div>
-            </div>
-        </div>
-
-        <!-- Row 3: Next 3 Days -->
-        <div class="row row-forecast">
-            <div class="forecast-title">Next 3 Days</div>
-            <div class="forecast-row" id="forecastContainer">
-                <div class="forecast-day">Loading...</div>
-            </div>
-        </div>
-
-        <!-- Row 4: Calendar Events -->
-        <div class="row row-calendar">
-            <div class="calendar-title">Upcoming Events</div>
-            <div class="calendar-events" id="calendarContainer">
-                <div class="event-item">Loading calendar...</div>
+        <!-- Right Column: Calendar -->
+        <div class="calendar-column">
+            <div class="row row-calendar">
+                <div class="calendar-title">CALENDAR</div>
+                <div class="calendar-events" id="calendarContainer">
+                    <div class="event-item">Loading calendar...</div>
+                </div>
             </div>
         </div>
     </div>
@@ -545,9 +604,17 @@
             
             document.getElementById('feelsLike').innerHTML = `H: ${highTemp}° L: ${lowTemp}°<br>Wind: ${windSpeed} km/h<br>Rain: ${precipDisplay}`;
 
-            // Precipitation - Next 24 hours
+            // Precipitation - Next 12 hours
             const hourlyContainer = document.getElementById('hourlyContainer');
             hourlyContainer.innerHTML = '';
+
+            // Find max precipitation for scaling
+            let maxPrecip = 0;
+            for (let i = 0; i < 12 && i < timeseries.length; i++) {
+                const precip = timeseries[i].data.next_1_hours?.details?.precipitation_amount || 0;
+                maxPrecip = Math.max(maxPrecip, precip);
+            }
+            if (maxPrecip === 0) maxPrecip = 1; // Default scale if no rain
 
             for (let i = 0; i < 12 && i < timeseries.length; i++) {
                 const entry = timeseries[i];
@@ -558,33 +625,25 @@
                 const hourSlot = document.createElement('div');
                 hourSlot.className = 'hour-slot';
 
+                // Always show a bar, scale based on max precipitation
+                const barHeight = Math.max(2, (precip / maxPrecip) * 60);
+                
                 if (precip > 0.05) {
-                    // Show bar with precipitation data
-                    const barHeight = Math.min(Math.max(precip * 6, 3), 70); // Scale precipitation to bar height
-                    
                     const precipText = document.createElement('div');
                     precipText.className = 'hour-precip-text';
                     precipText.textContent = precip.toFixed(1);
-
-                    const bar = document.createElement('div');
-                    bar.className = 'hour-bar';
-                    bar.style.height = barHeight + 'px';
-
-                    const timeText = document.createElement('div');
-                    timeText.className = 'hour-time';
-                    timeText.textContent = hour;
-
                     hourSlot.appendChild(precipText);
-                    hourSlot.appendChild(bar);
-                    hourSlot.appendChild(timeText);
-                } else {
-                    // Show minimal bar for no/minimal precipitation
-                    const timeText = document.createElement('div');
-                    timeText.className = 'hour-time';
-                    timeText.textContent = hour;
-
-                    hourSlot.appendChild(timeText);
                 }
+
+                const bar = document.createElement('div');
+                bar.className = 'hour-bar';
+                bar.style.height = barHeight + 'px';
+                hourSlot.appendChild(bar);
+
+                const timeText = document.createElement('div');
+                timeText.className = 'hour-time';
+                timeText.textContent = hour;
+                hourSlot.appendChild(timeText);
 
                 hourlyContainer.appendChild(hourSlot);
             }
@@ -662,14 +721,26 @@
         // Fetch calendar events
         async function loadCalendarEvents() {
             try {
-                const response = await fetch('calendar.json');
+                const response = await fetch('/public/calendar.json');
                 if (!response.ok) throw new Error('Calendar file not found');
                 
                 const data = await response.json();
                 displayCalendarEvents(data.events);
             } catch (error) {
-                console.log('Calendar events not available:', error);
-                document.getElementById('calendarContainer').innerHTML = '<div class="event-item">No calendar data</div>';
+                console.log('Calendar events not available, trying alternate path:', error);
+                // Try alternate path
+                try {
+                    const response2 = await fetch('calendar.json');
+                    if (response2.ok) {
+                        const data = await response2.json();
+                        displayCalendarEvents(data.events);
+                    } else {
+                        throw error;
+                    }
+                } catch (e) {
+                    console.log('Could not load calendar:', e);
+                    document.getElementById('calendarContainer').innerHTML = '<div class="event-item">No calendar data</div>';
+                }
             }
         }
 
@@ -682,30 +753,132 @@
                 return;
             }
 
-            // Show next 5 events
-            for (let i = 0; i < Math.min(5, events.length); i++) {
-                const event = events[i];
+            // Filter to show:
+            // 1. All-day events that haven't ended yet (end date >= today)
+            // 2. Timed events that haven't passed yet (start time >= now)
+            const now = new Date();
+            const today = new Date(now);
+            today.setHours(0, 0, 0, 0);
+            
+            const futureEvents = events.filter(event => {
+                if (event.all_day) {
+                    // For all-day events, check if the end date hasn't passed
+                    const endDate = new Date(event.end);
+                    endDate.setHours(0, 0, 0, 0);
+                    return endDate >= today;
+                } else {
+                    // For timed events, check if start time hasn't passed
+                    const eventStart = new Date(event.start);
+                    return eventStart >= now;
+                }
+            });
+
+            if (futureEvents.length === 0) {
+                container.innerHTML = '<div class="event-item">No upcoming events</div>';
+                return;
+            }
+
+            // Group events by date
+            const eventsByDate = {};
+            for (const event of futureEvents) {
                 const startDate = new Date(event.start);
                 
-                let timeStr = '';
                 if (event.all_day) {
-                    timeStr = startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    // For all-day events, add to every day it spans
+                    const endDate = new Date(event.end);
+                    endDate.setDate(endDate.getDate() - 1); // end date is exclusive, so subtract 1
+                    
+                    let currentDate = new Date(startDate);
+                    while (currentDate <= endDate) {
+                        const dateKey = currentDate.toLocaleDateString('sv-SE');
+                        if (!eventsByDate[dateKey]) {
+                            eventsByDate[dateKey] = [];
+                        }
+                        eventsByDate[dateKey].push(event);
+                        currentDate.setDate(currentDate.getDate() + 1);
+                    }
                 } else {
-                    timeStr = startDate.toLocaleString('en-US', { 
-                        month: 'short', 
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
+                    // For timed events, add only on the start date
+                    const dateKey = startDate.toLocaleDateString('sv-SE');
+                    if (!eventsByDate[dateKey]) {
+                        eventsByDate[dateKey] = [];
+                    }
+                    eventsByDate[dateKey].push(event);
                 }
+            }
 
-                const eventDiv = document.createElement('div');
-                eventDiv.className = 'event-item';
-                eventDiv.innerHTML = `
-                    <div class="event-time">${timeStr}</div>
-                    <div class="event-title">${event.title}</div>
-                `;
-                container.appendChild(eventDiv);
+            // Sort dates
+            const sortedDates = Object.keys(eventsByDate).sort();
+
+            // Format dates in Danish and display - limit to 17 units
+            const danishMonths = ['Januar', 'Februar', 'Marts', 'April', 'Maj', 'Juni', 'Juli', 'Augusti', 'September', 'Oktober', 'November', 'December'];
+            
+            let unitCount = 0;
+            const maxUnits = 18;
+            
+            for (const dateKey of sortedDates) {
+                if (unitCount >= maxUnits) break;
+                
+                // Check if we have room for at least date header + 1 event
+                const eventsForDate = eventsByDate[dateKey].length;
+                if (unitCount + 1 + Math.min(1, eventsForDate) > maxUnits) {
+                    // Not enough room for date header + at least one event
+                    break;
+                }
+                
+                const dateObj = new Date(dateKey + 'T00:00:00Z');
+                const day = dateObj.getUTCDate();
+                const month = danishMonths[dateObj.getUTCMonth()];
+                const year = dateObj.getUTCFullYear();
+                const dateHeaderStr = `${day} ${month} ${year}`;
+
+                // Add date header (counts as 1 unit)
+                const dateHeader = document.createElement('div');
+                dateHeader.className = 'event-date-header';
+                dateHeader.style.fontWeight = '700';
+                dateHeader.style.fontSize = '14px';
+                dateHeader.style.marginTop = '0px';
+                dateHeader.style.marginBottom = '0px';
+                dateHeader.style.backgroundColor = '#000';
+                dateHeader.style.color = '#fff';
+                dateHeader.style.padding = '4px 8px';
+                dateHeader.style.borderRadius = '2px';
+                dateHeader.style.lineHeight = '1.3';
+                dateHeader.textContent = dateHeaderStr;
+                container.appendChild(dateHeader);
+                unitCount++;
+
+                // Add events for this date (each counts as 1 unit)
+                for (const event of eventsByDate[dateKey]) {
+                    if (unitCount >= maxUnits) {
+                        break;
+                    }
+                    
+                    const eventDiv = document.createElement('div');
+                    eventDiv.className = 'event-item';
+
+                    const titleEl = document.createElement('div');
+                    titleEl.className = 'event-title';
+                    titleEl.textContent = event.title.trim();
+                    eventDiv.appendChild(titleEl);
+
+                    const timeEl = document.createElement('div');
+                    timeEl.className = 'event-time';
+                    
+                    if (event.all_day) {
+                        timeEl.textContent = '(all-day)';
+                    } else {
+                        const startDate = new Date(event.start);
+                        const endDate = new Date(event.end);
+                        const startTime = String(startDate.getHours()).padStart(2, '0') + ':' + String(startDate.getMinutes()).padStart(2, '0');
+                        const endTime = String(endDate.getHours()).padStart(2, '0') + ':' + String(endDate.getMinutes()).padStart(2, '0');
+                        timeEl.textContent = `(${startTime} – ${endTime})`;
+                    }
+                    eventDiv.appendChild(timeEl);
+
+                    container.appendChild(eventDiv);
+                    unitCount++;
+                }
             }
         }
 

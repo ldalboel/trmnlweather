@@ -2,8 +2,8 @@ name: Update Calendar
 
 on:
   schedule:
-    # Run every 6 hours
-    - cron: '0 */6 * * *'
+    # Run every 15 minutes
+    - cron: '*/15 * * * *'
   # Allow manual trigger
   workflow_dispatch:
 
@@ -28,7 +28,9 @@ jobs:
 
       - name: Fetch calendar events
         env:
-          GOOGLE_CALENDAR_KEY: ${{ secrets.GOOGLE_CALENDAR_KEY }}
+          GOOGLE_CALENDAR_REFRESH_TOKEN: ${{ secrets.GOOGLE_CALENDAR_REFRESH_TOKEN }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
         run: python scripts/update_calendar.py
 
       - name: Commit and push if changed
