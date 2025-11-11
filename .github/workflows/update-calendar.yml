@@ -34,6 +34,8 @@ jobs:
         run: python scripts/update_calendar.py
 
       - name: Fetch train departures
+        env:
+          TZ: Europe/Copenhagen
         run: python scripts/update_trains.py
 
       - name: Commit and push if changed
