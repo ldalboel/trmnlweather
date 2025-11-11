@@ -37,5 +37,5 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add public/calendar.json
+          git add calendar.json
           git diff --quiet && git diff --staged --quiet || (git commit -m "Update calendar events" && git pull --rebase origin main && git push origin main)

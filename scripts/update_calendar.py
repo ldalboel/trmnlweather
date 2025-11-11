@@ -59,8 +59,7 @@ try:
         print("This usually means the GOOGLE_CALENDAR_REFRESH_TOKEN is invalid or expired.")
         print("Run: python3 scripts/get_oauth_token.py")
         # Create empty calendar.json and exit
-        os.makedirs('public', exist_ok=True)
-        with open('public/calendar.json', 'w') as f:
+        with open('calendar.json', 'w') as f:
             json.dump({'updated': datetime.utcnow().isoformat(), 'events': []}, f)
         exit(1)
     else:
@@ -136,11 +135,11 @@ try:
     # Ensure output directory exists
     os.makedirs('public', exist_ok=True)
     
-    # Write to JSON file
-    with open('public/calendar.json', 'w') as f:
+    # Write to JSON file at root for GitHub Pages
+    with open('calendar.json', 'w') as f:
         json.dump(calendar_data, f, indent=2)
     
-    print(f"\n✓ Successfully saved {len(events)} events to public/calendar.json")
+    print(f"\n✓ Successfully saved {len(events)} events to calendar.json")
     
 except Exception as e:
     print(f"\n✗ Error fetching calendar: {e}")
