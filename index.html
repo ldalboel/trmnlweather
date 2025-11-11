@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Valby Weather - TRMNL</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -14,16 +17,16 @@
         body {
             background-color: #ffffff;
             color: #000000;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            padding: 6px;
-            width: 400px;
+            font-family: 'Fira Code', monospace;
+            padding: 0;
+            width: 800px;
             height: 480px;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
+            overflow: hidden;
         }
 
-        /* TRMNL half-page (right side) - optimized for eink */
         .container {
             width: 100%;
             height: 100%;
@@ -32,120 +35,118 @@
             gap: 0;
         }
 
-        /* Header */
-        .header {
-            text-align: center;
-            padding-bottom: 4px;
-            margin-bottom: 4px;
-            border-bottom: 1px solid #000000;
-        }
-
-        .title {
-            font-size: 18px;
-            font-weight: 900;
-            letter-spacing: 1px;
-        }
-
-        .timestamp {
-            font-size: 10px;
-            margin-top: 2px;
-            opacity: 0.8;
-            font-weight: 600;
-        }
-
-        /* Row sections */
+        /* Three vertical rows */
         .row {
-            padding: 6px;
-            flex: 1;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
-            border-bottom: 1px solid #000000;
-            overflow: hidden;
+            border-bottom: 1px solid #cccccc;
+            flex: 1;
         }
 
         .row:last-child {
-            border-bottom: none;
+            border-bottom: 0;
         }
 
-        .row-title {
-            font-size: 11px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 3px;
-        }
-
-        .row-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 6px;
-        }
-
-        /* Today's weather row */
-        .weather-today {
+        /* Row 1: Today's weather */
+        .row-today {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            flex: 1;
+            padding: 16px 20px;
+        }
+
+        .today-icon-section {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
         }
 
         .weather-icon {
-            font-size: 64px;
-            min-width: 64px;
-            text-align: center;
-            line-height: 1;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000000;
+        }
+        
+        .weather-icon svg {
+            width: 100%;
+            height: 100%;
         }
 
-        .weather-info {
-            flex: 1;
-            text-align: center;
+        .today-details-section {
+            flex: 0 0 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .location-title {
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            line-height: 1.1;
+            letter-spacing: 0.5px;
+            opacity: 0.8;
         }
 
         .temp {
-            font-size: 36px;
-            font-weight: 900;
+            font-size: 56px;
+            font-weight: 700;
+            margin-bottom: 2px;
+            line-height: 1;
         }
 
         .condition {
             font-size: 11px;
+            margin-bottom: 6px;
+            font-weight: 500;
             opacity: 0.9;
-            margin-top: 2px;
-            font-weight: 700;
         }
 
-        .feels-like {
+        .weather-details {
             font-size: 10px;
-            opacity: 0.7;
-            margin-top: 1px;
-            font-weight: 600;
+            opacity: 0.85;
+            line-height: 1.3;
+            font-weight: 500;
         }
 
-        /* Precipitation row */
-        .precipitation-row {
-            width: 100%;
+        .detail-line {
+            margin: 1px 0;
+        }
+
+        /* Row 2: Precipitation */
+        .row-precipitation {
             display: flex;
             flex-direction: column;
-            gap: 3px;
+            padding: 16px 20px;
         }
 
-        .precip-section-label {
-            margin-bottom: 0;
-            font-size: 9px;
-            font-weight: 900;
-            opacity: 0.8;
+        .section-title {
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 8px;
             text-align: center;
+            letter-spacing: 0.5px;
+        }
+
+        .precipitation-row {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            flex: 1;
+            justify-content: flex-start;
         }
 
         .hourly-precip {
             display: flex;
             gap: 1px;
-            margin-bottom: 0;
             justify-content: space-between;
             align-items: flex-end;
-            height: 50px;
+            height: 80px;
+            width: 100%;
         }
 
         .hour-slot {
@@ -156,53 +157,56 @@
             justify-content: flex-end;
             height: 100%;
             gap: 1px;
+            min-width: 0;
         }
 
         .hour-time {
-            font-size: 14px;
-            font-weight: 700;
+            font-size: 8px;
+            font-weight: 500;
             text-align: center;
             width: 100%;
+            order: 3;
+            line-height: 1;
         }
 
         .hour-bar {
             width: 100%;
             background-color: #000;
-            min-height: 2px;
-        }
-
-        .hour-dot {
-            width: 100%;
-            height: 2px;
-            background-color: #000;
+            min-height: 1px;
+            order: 2;
         }
 
         .hour-precip-text {
-            font-size: 12px;
-            font-weight: 700;
+            font-size: 7px;
+            font-weight: 500;
             text-align: center;
             width: 100%;
+            order: 1;
+            line-height: 1;
         }
 
-        .hour-chance-text {
-            display: none;
+        /* Row 3: Next 3 days */
+        .row-forecast {
+            display: flex;
+            flex-direction: column;
+            padding: 12px 20px;
+            justify-content: flex-start;
         }
 
-        .aggregated-precip {
-            display: none;
+        .forecast-title {
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-align: center;
+            letter-spacing: 0.5px;
         }
 
-        .agg-slot {
-            display: none;
-        }
-
-        /* Next 3 days row */
         .forecast-row {
             display: flex;
-            justify-content: space-between;
-            gap: 6px;
+            justify-content: space-around;
+            gap: 16px;
             width: 100%;
-            align-items: center;
+            align-items: flex-start;
         }
 
         .forecast-day {
@@ -210,44 +214,44 @@
             text-align: center;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            gap: 2px;
-        }
-
-        .forecast-day:last-child {
-            padding-right: 0;
+            justify-content: flex-start;
+            gap: 3px;
         }
 
         .day-name {
-            font-size: 12px;
-            font-weight: 900;
+            font-size: 10px;
+            font-weight: 700;
             text-transform: uppercase;
-            margin-bottom: 0;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
+            line-height: 1;
         }
 
         .day-icon {
-            font-size: 0;
-            margin: 0;
-            display: none;
+            width: 28px;
+            height: 28px;
+            line-height: 1;
+            margin: 2px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000000;
+        }
+        
+        .day-icon svg {
+            width: 100%;
+            height: 100%;
         }
 
         .day-temp {
-            font-size: 18px;
-            font-weight: 900;
-        }
-
-        .day-temp-low {
-            font-size: 12px;
-            opacity: 0.7;
+            font-size: 11px;
             font-weight: 700;
+            line-height: 1.1;
         }
 
-        .day-precip {
-            font-size: 9px;
+        .day-temp-range {
+            font-size: 10px;
             opacity: 0.8;
-            margin-top: 2px;
-            font-weight: 700;
+            font-weight: 500;
         }
 
         /* Loading and error states */
@@ -266,7 +270,7 @@
             text-align: center;
         }
 
-        /* Optimize for eink - disable anti-aliasing */
+        /* Optimize for eink */
         @media (prefers-color-scheme: dark) {
             body {
                 background-color: #ffffff;
@@ -274,49 +278,41 @@
             }
         }
 
-        /* Print/eink optimizations */
         @media print {
             body {
-                padding: 8px;
+                padding: 12px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <div class="title">Copenhagen Weather</div>
-            <div class="timestamp" id="timestamp"></div>
-        </div>
-
         <!-- Row 1: Today's Weather -->
-        <div class="row">
-            <div class="row-title">Today's Weather</div>
-            <div class="row-content">
-                <div class="weather-today">
-                    <div class="weather-icon" id="currentIcon"></div>
-                    <div class="weather-info">
-                        <div class="temp"><span id="currentTemp">--</span>°C</div>
-                        <div class="condition" id="currentCondition">Loading...</div>
-                        <div class="feels-like" id="feelsLike"></div>
-                    </div>
+        <div class="row row-today">
+            <div class="today-icon-section">
+                <div class="weather-icon" id="currentIcon"></div>
+            </div>
+            <div class="today-details-section">
+                <div class="location-title">Today in Copenhagen</div>
+                <div class="temp"><span id="currentTemp">--</span>°C</div>
+                <div class="condition" id="currentCondition">Loading...</div>
+                <div class="weather-details">
+                    <div class="detail-line" id="feelsLike"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Row 2: Precipitation -->
-        <div class="row">
-            <div class="row-title">Precipitation (Next 12h)</div>
-            <div class="row-content">
-                <div class="precipitation-row">
-                    <div class="hourly-precip" id="hourlyContainer"></div>
-                </div>
+        <!-- Row 2: Precipitation (24h) -->
+        <div class="row row-precipitation">
+            <div class="section-title">Rain next 24h</div>
+            <div class="precipitation-row">
+                <div class="hourly-precip" id="hourlyContainer"></div>
             </div>
         </div>
 
         <!-- Row 3: Next 3 Days -->
-        <div class="row">
-            <div class="row-title">Next 3 Days</div>
+        <div class="row row-forecast">
+            <div class="forecast-title">Next 3 Days</div>
             <div class="forecast-row" id="forecastContainer">
                 <div class="forecast-day">Loading...</div>
             </div>
@@ -352,39 +348,64 @@
         }
 
         function getWeatherIcon(symbolCode) {
-            // Norwegian Meteorological Institute weather symbols to emoji mapping
-            const iconMap = {
-                'clearsky_day': '☀️',
-                'clearsky_night': '🌙',
-                'cloudy': '☁️',
-                'fair_day': '⛅',
-                'fair_night': '⛅',
-                'fog': '🌫️',
-                'lightrain': '🌧️',
-                'lightrain_and_thunder': '⛈️',
-                'lightsnow': '🌨️',
-                'lightsnow_and_thunder': '⛈️',
-                'rain': '🌧️',
-                'rain_and_thunder': '⛈️',
-                'snow': '❄️',
-                'snow_and_thunder': '⛈️',
-                'heavyrain': '🌧️',
-                'heavyrain_and_thunder': '⛈️',
-                'heavysnow': '❄️',
-                'heavysnow_and_thunder': '⛈️',
-                'sleet': '🌧️',
-                'sleet_and_thunder': '⛈️',
-                'rainshower_day': '🌧️',
-                'rainshower_night': '🌧️',
-                'snowshower_day': '🌨️',
-                'snowshower_night': '🌨️',
-                'partlycloudy_day': '⛅',
-                'partlycloudy_night': '⛅'
+            // Convert symbol code to WMO code for SVG icon rendering
+            const wmoCodeMap = {
+                'clearsky_day': 0,
+                'clearsky_night': 0,
+                'mainly_clear_day': 1,
+                'mainly_clear_night': 1,
+                'partly_cloudy_day': 2,
+                'partly_cloudy_night': 2,
+                'overcast': 3,
+                'fog': 45,
+                'depositing_rime_fog': 48,
+                'lightrain': 51,
+                'light_drizzle': 51,
+                'moderate_drizzle': 53,
+                'dense_drizzle': 55,
+                'lightrain_and_thunder': 80,
+                'rain_and_thunder': 95,
+                'rain': 61,
+                'moderate_rain': 63,
+                'heavy_rain': 65,
+                'heavyrain_and_thunder': 96,
+                'lightsnow': 71,
+                'snow': 73,
+                'heavy_snow': 75,
+                'snow_and_thunder': 99,
+                'lightsnow_and_thunder': 85,
+                'sleet': 67,
+                'sleet_and_thunder': 86,
+                'rainshower_day': 80,
+                'rainshower_night': 80,
+                'snowshower_day': 85,
+                'snowshower_night': 85,
+                'partlycloudy_day': 2,
+                'partlycloudy_night': 2,
+                'cloudy': 3
             };
 
-            // Extract base symbol (remove _day/_night suffix for lookup)
-            const base = symbolCode.replace(/_(day|night)/, '');
-            return iconMap[symbolCode] || iconMap[base] || '🌡️';
+            const wmoCode = wmoCodeMap[symbolCode] ?? 0;
+            return renderSVGIcon(wmoCode);
+        }
+
+        function renderSVGIcon(code) {
+            // SVG icon functions based on WMO codes
+            const sunIcon = () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:100%;height:100%"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+            const cloudIcon = () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:100%;height:100%"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>`;
+            const fogIcon = () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:100%;height:100%"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="21" y2="6"></line></svg>`;
+            const rainIcon = () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:100%;height:100%"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path><path d="M12 15v6"></path><path d="M8 15v6"></path><path d="M16 15v6"></path></svg>`;
+            const snowIcon = () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:100%;height:100%"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path><line x1="8" y1="15" x2="8" y2="19"></line><line x1="6" y1="17" x2="10" y2="17"></line><line x1="16" y1="15" x2="16" y2="19"></line><line x1="14" y1="17" x2="18" y2="17"></line></svg>`;
+            const thunderIcon = () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:100%;height:100%"><path d="M21.74 18a4.99 4.99 0 0 0-8.86-3.37A6 6 0 0 0 4 18"></path><path d="m13 12-4 5h6l-4 5"></path></svg>`;
+            
+            // Map WMO codes to icons
+            if (code === 0) return sunIcon();  // Clear sky
+            if (code >= 1 && code <= 3) return cloudIcon();  // Cloudy
+            if (code === 45 || code === 48) return fogIcon();  // Fog
+            if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) return rainIcon();  // Rain/Drizzle
+            if ((code >= 71 && code <= 77) || (code >= 85 && code <= 86)) return snowIcon();  // Snow
+            if (code >= 95 && code <= 99) return thunderIcon();  // Thunderstorm
+            return cloudIcon();  // Default
         }
 
         function getWeatherDescription(symbolCode) {
@@ -428,110 +449,121 @@
             const currentData = current.data.instant.details;
             const currentSymbol = current.data.next_1_hours?.summary?.symbol_code || 'unknown';
 
-            // Update timestamp
-            document.getElementById('timestamp').textContent = 
-                now.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-
-            // Row 1: Today's Weather
+            // Today's Weather Section
             const currentIcon = getWeatherIcon(currentSymbol);
             const currentTemp = Math.round(currentData.air_temperature);
+            const windSpeed = Math.round(currentData.wind_speed);
 
-            document.getElementById('currentIcon').textContent = currentIcon;
+            document.getElementById('currentIcon').innerHTML = currentIcon;
             document.getElementById('currentTemp').textContent = currentTemp;
             document.getElementById('currentCondition').textContent = getWeatherDescription(currentSymbol);
-            document.getElementById('feelsLike').textContent = `Wind: ${Math.round(currentData.wind_speed)} km/h`;
+            
+            // Get H/L temps for today
+            const today = new Date(now);
+            today.setHours(0, 0, 0, 0);
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            
+            let todayTemps = [];
+            for (const entry of timeseries) {
+                const entryTime = new Date(entry.time);
+                if (entryTime >= today && entryTime < tomorrow) {
+                    todayTemps.push(entry.data.instant.details.air_temperature);
+                }
+            }
+            
+            const highTemp = todayTemps.length > 0 ? Math.round(Math.max(...todayTemps)) : currentTemp;
+            const lowTemp = todayTemps.length > 0 ? Math.round(Math.min(...todayTemps)) : currentTemp;
+            
+            document.getElementById('feelsLike').innerHTML = `H: ${highTemp}° L: ${lowTemp}°<br>Wind: ${windSpeed} km/h`;
 
-            // Row 2: Precipitation - Next 12 hours as bars
+            // Precipitation - Next 24 hours
             const hourlyContainer = document.getElementById('hourlyContainer');
             hourlyContainer.innerHTML = '';
 
-            // Next 12 hours (hourly bars)
-            for (let i = 0; i < 12 && i < timeseries.length; i++) {
+            for (let i = 0; i < 24 && i < timeseries.length; i++) {
                 const entry = timeseries[i];
                 const entryTime = new Date(entry.time);
-                const hour = entryTime.getHours();
+                const hour = entryTime.getHours().toString().padStart(2, '0');
                 const precip = entry.data.next_1_hours?.details?.precipitation_amount || 0;
-                const chance = entry.data.next_1_hours?.details?.probability_of_precipitation || 0;
 
                 const hourSlot = document.createElement('div');
                 hourSlot.className = 'hour-slot';
 
-                if (precip > 0) {
+                if (precip > 0.05) {
                     // Show bar with precipitation data
-                    const barHeight = Math.min(Math.max(precip * 3, 8), 40); // Scale precipitation to bar height
-                    const bar = document.createElement('div');
-                    bar.className = 'hour-bar';
-                    bar.style.height = barHeight + 'px';
-
+                    const barHeight = Math.min(Math.max(precip * 6, 3), 70); // Scale precipitation to bar height
+                    
                     const precipText = document.createElement('div');
                     precipText.className = 'hour-precip-text';
                     precipText.textContent = precip.toFixed(1);
 
+                    const bar = document.createElement('div');
+                    bar.className = 'hour-bar';
+                    bar.style.height = barHeight + 'px';
+
                     const timeText = document.createElement('div');
                     timeText.className = 'hour-time';
-                    timeText.textContent = hour.toString().padStart(2, '0');
+                    timeText.textContent = hour;
 
                     hourSlot.appendChild(precipText);
                     hourSlot.appendChild(bar);
                     hourSlot.appendChild(timeText);
                 } else {
-                    // Show small bar for no precipitation
-                    const bar = document.createElement('div');
-                    bar.className = 'hour-bar';
-                    bar.style.height = '2px';
-
+                    // Show minimal bar for no/minimal precipitation
                     const timeText = document.createElement('div');
                     timeText.className = 'hour-time';
-                    timeText.textContent = hour.toString().padStart(2, '0');
+                    timeText.textContent = hour;
 
-                    hourSlot.appendChild(bar);
                     hourSlot.appendChild(timeText);
                 }
 
                 hourlyContainer.appendChild(hourSlot);
             }
 
-            // Row 3: Next 3 Days Forecast
+            // Next 3 Days Forecast
             const forecastContainer = document.getElementById('forecastContainer');
             forecastContainer.innerHTML = '';
 
-            // Group by day
+            // Group by day and get next 3 full days
             const dailyForecasts = {};
             for (let i = 0; i < timeseries.length; i++) {
                 const entry = timeseries[i];
                 const entryTime = new Date(entry.time);
-                const dayKey = entryTime.toDateString();
+                const dayStart = new Date(entryTime);
+                dayStart.setHours(0, 0, 0, 0);
+                const dayKey = dayStart.getTime();
                 
                 if (!dailyForecasts[dayKey]) {
                     dailyForecasts[dayKey] = {
-                        times: [],
+                        date: dayStart,
                         temps: [],
                         symbols: [],
                         precips: []
                     };
                 }
                 
-                dailyForecasts[dayKey].times.push(entryTime);
                 dailyForecasts[dayKey].temps.push(entry.data.instant.details.air_temperature);
                 dailyForecasts[dayKey].symbols.push(entry.data.next_1_hours?.summary?.symbol_code || 'unknown');
                 dailyForecasts[dayKey].precips.push(entry.data.next_1_hours?.details?.probability_of_precipitation || 0);
             }
 
-            // Display next 3 days
-            const days = Object.entries(dailyForecasts).slice(1, 4);
-            for (const [dayKey, dayData] of days) {
-                const dayDate = dayData.times[0];
-                const dayName = dayDate.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
+            // Get next 3 days (skip today)
+            const sortedDays = Object.values(dailyForecasts).sort((a, b) => a.date - b.date).slice(1, 4);
+            
+            for (const dayData of sortedDays) {
+                const dayName = dayData.date.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
                 const maxTemp = Math.round(Math.max(...dayData.temps));
                 const minTemp = Math.round(Math.min(...dayData.temps));
-                const maxPrecipChance = Math.max(...dayData.precips);
+                const primarySymbol = dayData.symbols[Math.floor(dayData.symbols.length / 2)];
+                const dayIcon = getWeatherIcon(primarySymbol);
 
                 const forecastDay = document.createElement('div');
                 forecastDay.className = 'forecast-day';
                 forecastDay.innerHTML = `
                     <div class="day-name">${dayName}</div>
-                    <div class="day-temp">${maxTemp}°</div>
-                    <div class="day-temp-low">${minTemp}°</div>
+                    <div class="day-icon">${dayIcon}</div>
+                    <div class="day-temp">${maxTemp}° ${minTemp}°</div>
                 `;
                 forecastContainer.appendChild(forecastDay);
             }
