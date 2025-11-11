@@ -878,5 +878,15 @@
         // Load calendar on page load
         loadCalendarEvents();
     </script>
+    <script src="calendar-data.js"></script>
+    <script>
+        // Load calendar after calendar-data.js is loaded
+        if (window.calendarData) {
+            displayCalendarEvents(window.calendarData.events);
+        } else {
+            // Fallback to fetch if JS file not available
+            loadCalendarEvents();
+        }
+    </script>
 </body>
 </html>

@@ -139,7 +139,14 @@ try:
     with open('calendar.json', 'w') as f:
         json.dump(calendar_data, f, indent=2)
     
-    print(f"\n✓ Successfully saved {len(events)} events to calendar.json")
+    # Also write as JavaScript file for better browser compatibility
+    # This way TRMNL can load it as a simple script tag
+    with open('calendar-data.js', 'w') as f:
+        f.write('window.calendarData = ')
+        f.write(json.dumps(calendar_data))
+        f.write(';')
+    
+    print(f"\n✓ Successfully saved {len(events)} events to calendar.json and calendar-data.js")
     
 except Exception as e:
     print(f"\n✗ Error fetching calendar: {e}")
