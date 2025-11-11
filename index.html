@@ -1040,19 +1040,33 @@
         // Load calendar on page load
         loadCalendarEvents();
     </script>
-    <script src="calendar-data.js"></script>
-    <script src="trains-data.js"></script>
     <script>
-        // Load calendar after calendar-data.js is loaded
-        if (window.calendarData) {
-            displayCalendarEvents(window.calendarData.events);
-        } else {
-            // Fallback to fetch if JS file not available
-            loadCalendarEvents();
-        }
+        // Add cache-busting timestamp to force fresh data from GitHub Pages
+        const timestamp = new Date().getTime();
         
-        // Load trains after trains-data.js is loaded
-        fetchTrains();
+        // Load calendar data
+        const calendarScript = document.createElement('script');
+        calendarScript.src = `calendar-data.js?t=${timestamp}`;
+        document.head.appendChild(calendarScript);
+        
+        // Load train data
+        const trainsScript = document.createElement('script');
+        trainsScript.src = `trains-data.js?t=${timestamp}`;
+        document.head.appendChild(trainsScript);
+        
+        // Wait for scripts to load and display data
+        setTimeout(() => {
+            // Load calendar after calendar-data.js is loaded
+            if (window.calendarData) {
+                displayCalendarEvents(window.calendarData.events);
+            } else {
+                // Fallback to fetch if JS file not available
+                loadCalendarEvents();
+            }
+            
+            // Load trains after trains-data.js is loaded
+            fetchTrains();
+        }, 100);
     </script>
 </body>
 </html>
