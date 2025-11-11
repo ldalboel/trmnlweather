@@ -29,14 +29,31 @@ credentials = service_account.Credentials.from_service_account_info(
 # Create the Calendar API client
 service = build('calendar', 'v3', credentials=credentials)
 
-# Get the primary calendar ID (or you can specify a specific calendar ID)
-# For primary calendar, use 'primary'
-calendar_id = 'primary'
+# Try to get calendar list to see what calendars are accessible
+print("Available calendars:")
+try:
+    calendar_list = service.calendarList().list().execute()
+    calendars = calendar_list.get('items', [])
+    for cal in calendars:
+        print(f"  - {cal['summary']} ({cal['id']})")
+    
+    if not calendars:
+        print("  No calendars found! Make sure you shared your calendar with the service account.")
+        exit(1)
+    
+    # Use the first calendar found (usually the primary one)
+    calendar_id = calendars[0]['id']
+    print(f"\nUsing calendar: {calendar_id}")
+except Exception as e:
+    print(f"Error listing calendars: {e}")
+    exit(1)
 
 # Time range: today to 30 days from now
 now = datetime.utcnow()
 time_min = now.isoformat() + 'Z'
 time_max = (now + timedelta(days=30)).isoformat() + 'Z'
+
+print(f"Fetching events from {time_min} to {time_max}")
 
 try:
     # Fetch events
@@ -50,6 +67,8 @@ try:
     ).execute()
     
     events = events_result.get('items', [])
+    
+    print(f"Found {len(events)} events")
     
     # Process events into a simpler format
     calendar_data = {
@@ -79,9 +98,11 @@ try:
     with open('public/calendar.json', 'w') as f:
         json.dump(calendar_data, f, indent=2)
     
-    print(f"Successfully fetched {len(events)} events")
-    print(f"Saved to public/calendar.json")
+    print(f"Successfully saved {len(events)} events to public/calendar.json")
     
 except Exception as e:
     print(f"Error fetching calendar: {e}")
+    import traceback
+    traceback.print_exc()
     exit(1)
+
