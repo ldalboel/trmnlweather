@@ -19,8 +19,8 @@ def fetch_train_departures():
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
         }
         
-        # Build URLs with current date and time plus 5 minutes (handles day roll-over)
-        target_dt = datetime.now() + timedelta(minutes=5)
+        # Build URLs with current date and time plus 15 minutes (handles day roll-over)
+        target_dt = datetime.now() + timedelta(minutes=15)
         today = target_dt.strftime('%d.%m.%Y')
         current_time = target_dt.strftime('%H:%M')
         
