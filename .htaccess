@@ -1,9 +1,23 @@
 # GitHub Pages doesn't read .htaccess, but this documents the intent
 # To truly fix caching on GitHub Pages, we use client-side cache busting
 
-# The real solution is in index.html:
-# 1. Cache-busting timestamps on all fetch() calls
-# 2. Force reload via query parameters every 30 minutes
-# 3. Set short HTTP cache headers if hosting on custom domain
+# For Apache/custom hosting - implement these headers for zero caching:
+# <FilesMatch "\.(html|json|js)$">
+#     Header set Cache-Control "no-cache, must-revalidate"
+#     Header set Pragma "no-cache"
+#     Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
+# </FilesMatch>
 
-# For GitHub Pages specifically, use the strategies in index.html
+# For nginx/custom hosting:
+# location ~\.(html|json|js)$ {
+#     add_header Cache-Control "no-cache, must-revalidate";
+#     add_header Pragma "no-cache";
+#     add_header Expires "Wed, 11 Jan 1984 05:00:00 GMT";
+# }
+
+# The real solution for GitHub Pages is in index.html:
+# 1. Cache-busting timestamps on all fetch() calls (?t=Date.now())
+# 2. Force reload via query parameters every 30 minutes (localStorage tracking)
+# 3. Version strings on external resources
+# 4. Service Worker for advanced cache control (optional)
+# 5. Meta refresh fallback (30 minutes)
