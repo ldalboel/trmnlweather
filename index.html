@@ -43,6 +43,10 @@
             gap: 0;
         }
 
+        .container.reversed {
+            flex-direction: row-reverse;
+        }
+
         /* Left column: Weather */
         .weather-column {
             flex: 0 0 50%;
@@ -830,6 +834,14 @@
         }
 
         // Fetch weather on page load
+        // Randomly alternate column layout on page load
+        (function() {
+            const shouldReverse = Math.random() < 0.5;
+            if (shouldReverse) {
+                document.querySelector('.container').classList.add('reversed');
+            }
+        })();
+
         fetchWeather();
 
         // Refresh every 30 minutes
