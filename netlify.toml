@@ -1,6 +1,9 @@
 [build]
-  command = "echo 'Static site - no build needed'"
+  # Disable automatic builds - only deploy via GitHub webhook
+  # GitHub Actions pushes the built HTML, Netlify just serves it
+  command = "echo 'Skipping build - using GitHub Actions generated files'"
   publish = "."
+  ignore = "git diff --quiet HEAD^ HEAD -- ."  # Don't rebuild on commits
 
 # Redirect single page app requests to index.html
 [[redirects]]
