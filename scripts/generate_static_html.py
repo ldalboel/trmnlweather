@@ -58,9 +58,20 @@ def generate_static_html():
         window.calendarData = null;
     </script>'''
     
+    # Add cache busting timestamp to data objects
+    import datetime
+    cache_bust_timestamp = datetime.datetime.now().isoformat()
+    
+    # Add timestamp to both data objects for cache busting
+    if trains_data:
+        trains_data['_cache_bust'] = cache_bust_timestamp
+    if calendar_data:
+        calendar_data['_cache_bust'] = cache_bust_timestamp
+    
     # New embedded script with actual data
     new_script = f'''    <script>
         // Embedded data for simple browsers (like TRMNL) that don't wait for async script loads
+        // Cache busting: {cache_bust_timestamp}
         window.trainsData = {json.dumps(trains_data)};
         window.calendarData = {json.dumps(calendar_data)};
         

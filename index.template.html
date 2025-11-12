@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
+    <meta name="robots" content="no-cache">
     <title>Valby Weather - TRMNL</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1042,6 +1043,20 @@
 
         // Load calendar on page load
         loadCalendarEvents();
+    </script>
+    <script>
+        // Version check to detect stale cached data
+        // Store the version in sessionStorage - if it changes, force reload
+        (function() {
+            const currentVersion = document.currentScript.parentElement.textContent;
+            const storedVersion = sessionStorage.getItem('pageVersion');
+            if (storedVersion && storedVersion !== currentVersion && navigator.onLine) {
+                // Data has changed, do a hard refresh bypassing cache
+                window.location.href = window.location.href.split('?')[0] + '?v=' + Date.now();
+                return;
+            }
+            sessionStorage.setItem('pageVersion', currentVersion);
+        })();
     </script>
     <script>
         // PLACEHOLDER: Data will be embedded here by generate_static_html.py
