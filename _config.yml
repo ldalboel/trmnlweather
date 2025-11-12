@@ -1,0 +1,20 @@
+# Jekyll configuration for GitHub Pages
+# This controls caching behavior
+
+# Exclude files from GitHub Pages processing
+exclude:
+  - .git
+  - .gitignore
+  - scripts
+  - credentials.json
+  - "*.py"
+  - "*.sh"
+
+# Set markdown processor (default)
+markdown: kramdown
+
+# Disable caching for JSON files
+exclude_caches: true
+
+# Add custom headers would require Jekyll plugins which GH-Pages doesn't support
+# Instead, we rely on client-side cache busting via query parameters

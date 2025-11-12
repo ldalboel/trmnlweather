@@ -9,6 +9,8 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <meta name="robots" content="no-cache">
+    <!-- Force GitHub Pages to not cache this HTML -->
+    <meta http-equiv="refresh" content="1800">
     <title>Valby Weather - TRMNL</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -892,7 +894,8 @@
         // Fetch calendar events
         async function loadCalendarEvents() {
             try {
-                const response = await fetch('calendar.json');
+                // Add cache-busting query parameter
+                const response = await fetch('calendar.json?t=' + Date.now());
                 if (!response.ok) throw new Error('Calendar file not found');
                 
                 const data = await response.json();
@@ -1047,17 +1050,24 @@
         loadCalendarEvents();
     </script>
     <script>
-        // Version check to detect stale cached data
-        // Store the version in sessionStorage - if it changes, force reload
+        // Cache-busting strategy: Force refresh every 30 minutes
+        // This ensures TRMNL device gets fresh data even if cached
         (function() {
-            const currentVersion = document.currentScript.parentElement.textContent;
-            const storedVersion = sessionStorage.getItem('pageVersion');
-            if (storedVersion && storedVersion !== currentVersion && navigator.onLine) {
-                // Data has changed, do a hard refresh bypassing cache
-                window.location.href = window.location.href.split('?')[0] + '?v=' + Date.now();
+            const CACHE_DURATION_MS = 30 * 60 * 1000; // 30 minutes
+            
+            // Check localStorage (survives tab close, unlike sessionStorage)
+            const lastLoadTime = localStorage.getItem('pageLoadTime');
+            const now = Date.now();
+            
+            if (lastLoadTime && (now - parseInt(lastLoadTime)) > CACHE_DURATION_MS) {
+                // More than 30 minutes have passed - force hard refresh
+                localStorage.setItem('pageLoadTime', now.toString());
+                window.location.href = window.location.href.split('?')[0] + '?t=' + now;
                 return;
             }
-            sessionStorage.setItem('pageVersion', currentVersion);
+            
+            // Store current load time
+            localStorage.setItem('pageLoadTime', now.toString());
         })();
     </script>
     <script>
