@@ -41,6 +41,11 @@
             gap: 0;
         }
 
+        /* Column alternation: swap weather/calendar position randomly */
+        .container.reversed {
+            flex-direction: row-reverse;
+        }
+
         /* Left column: Weather */
         .weather-column {
             flex: 0 0 50%;
@@ -968,6 +973,45 @@
 
             // Sort dates
             const sortedDates = Object.keys(eventsByDate).sort();
+            const todayKey = today.toLocaleDateString('sv-SE');
+            
+            // Find first date with a non-all-day event
+            let firstNonAllDayDateIndex = -1;
+            for (let i = 0; i < sortedDates.length; i++) {
+                const dateEvents = eventsByDate[sortedDates[i]];
+                const hasNonAllDay = dateEvents.some(e => !e.all_day);
+                if (hasNonAllDay) {
+                    firstNonAllDayDateIndex = i;
+                    break;
+                }
+            }
+            
+            // Check if today has an all-day event that started before today
+            let todayHasOldAllDayEvent = false;
+            if (eventsByDate[todayKey]) {
+                for (const event of eventsByDate[todayKey]) {
+                    if (event.all_day) {
+                        const startDate = new Date(event.start);
+                        const eventStartKey = startDate.toLocaleDateString('sv-SE');
+                        if (eventStartKey < todayKey) {
+                            todayHasOldAllDayEvent = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            // If today has an old all-day event, ensure today is first
+            // Otherwise, ensure first non-all-day date is first
+            if (todayHasOldAllDayEvent && eventsByDate[todayKey] && sortedDates[0] !== todayKey) {
+                sortedDates.splice(sortedDates.indexOf(todayKey), 1);
+                sortedDates.unshift(todayKey);
+            } else if (firstNonAllDayDateIndex > 0) {
+                // Move first non-all-day date to the front
+                const firstNonAllDayDate = sortedDates[firstNonAllDayDateIndex];
+                sortedDates.splice(firstNonAllDayDateIndex, 1);
+                sortedDates.unshift(firstNonAllDayDate);
+            }
 
             // Format dates in Danish and display - limit to 17 units
             const danishMonths = ['Januar', 'Februar', 'Marts', 'April', 'Maj', 'Juni', 'Juli', 'Augusti', 'September', 'Oktober', 'November', 'December'];
@@ -1075,6 +1119,21 @@
         
         if (window.trainsData && window.trainsData.departures) {
             fetchTrains();
+        }
+
+        // Random column alternation: 50/50 chance to swap weather/calendar layout
+        // This provides visual variety on the TRMNL device
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.querySelector('.container');
+            if (container && Math.random() < 0.5) {
+                container.classList.add('reversed');
+            }
+        });
+        
+        // Also apply immediately in case DOMContentLoaded already fired
+        const container = document.querySelector('.container');
+        if (container && Math.random() < 0.5) {
+            container.classList.add('reversed');
         }
     </script>
 </body>
