@@ -1,5 +1,5 @@
 {
-  "updated": "2025-11-12T14:11:00.285175",
+  "updated": "2025-11-12T14:30:07.712470",
   "events": [
     {
       "title": "Lucas ferie",
@@ -8,14 +8,6 @@
       "description": "",
       "location": "",
       "all_day": true
-    },
-    {
-      "title": "Husk at vaske inden d. 17. ",
-      "start": "2025-11-12T18:00:00+01:00",
-      "end": "2025-11-12T19:00:00+01:00",
-      "description": "",
-      "location": "",
-      "all_day": false
     },
     {
       "title": "Malm\u00f6?",
@@ -29,6 +21,14 @@
       "title": "Poser. Bleer. V\u00e5dservietter. ",
       "start": "2025-11-13T12:00:00+01:00",
       "end": "2025-11-13T13:00:00+01:00",
+      "description": "",
+      "location": "",
+      "all_day": false
+    },
+    {
+      "title": "Husk at vaske inden d. 17. ",
+      "start": "2025-11-14T08:00:00+01:00",
+      "end": "2025-11-14T09:00:00+01:00",
       "description": "",
       "location": "",
       "all_day": false
