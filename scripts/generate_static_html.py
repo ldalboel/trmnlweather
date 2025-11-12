@@ -79,6 +79,12 @@ def generate_static_html():
     # Replace placeholder in HTML
     html_content = html_content.replace(old_placeholder, new_script)
     
+    # Add cache-busting comment with generation timestamp
+    import datetime
+    timestamp = datetime.datetime.now().isoformat()
+    cache_bust_comment = f'<!-- Generated: {timestamp} -->\n'
+    html_content = html_content.replace('<!DOCTYPE html>', f'<!DOCTYPE html>\n{cache_bust_comment}', 1)
+    
     # Write the generated HTML
     output_file = script_dir / 'index.html'
     with open(output_file, 'w', encoding='utf-8') as f:
