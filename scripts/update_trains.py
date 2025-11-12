@@ -53,31 +53,57 @@ def fetch_train_departures():
                 for row in rows:
                     try:
                         cells = row.find_all('td')
-                        if len(cells) < 4:
+                        if len(cells) < 3:
                             continue
                         
-                        # Cell 0 (sqFirst): scheduled time
+                        # Determine if this is a bus or train based on cell count
+                        # Bus format: 3 cells [time][line][destination] or 4 cells [time][prognosis][line][destination]
+                        # Train format: 6+ cells [time][prognosis][line][...][destination]
+                        
+                        is_bus = len(cells) in [3, 4]
+                        
+                        # Cell 0: scheduled time
                         time_str = cells[0].get_text(strip=True)
                         if ':' not in time_str:
                             continue
                         
-                        # Cell 1: prognosis time (may be empty)
                         prognosis_time = None
-                        if len(cells) > 1:
-                            prognosis_text = cells[1].get_text(strip=True)
-                            # Look for time in format "ca. HH:MM" or just "HH:MM"
-                            time_match = re.search(r'(\d{1,2}:\d{2})', prognosis_text)
-                            if time_match:
-                                prognosis_time = time_match.group(1)
+                        
+                        if is_bus:
+                            if len(cells) == 3:
+                                # Bus: [time][line][destination]
+                                line_cell_text = cells[1].get_text(strip=True)
+                                destination_text = cells[2].get_text(strip=True)
+                            else:  # len(cells) == 4
+                                # Bus: [time][prognosis][line][destination]
+                                prognosis_text = cells[1].get_text(strip=True)
+                                # Look for time in format "ca. HH:MM" or just "HH:MM"
+                                time_match = re.search(r'(\d{1,2}:\d{2})', prognosis_text)
+                                if time_match:
+                                    prognosis_time = time_match.group(1)
+                                
+                                line_cell_text = cells[2].get_text(strip=True)
+                                destination_text = cells[3].get_text(strip=True)
+                        else:
+                            # Train format (6+ cells): [time][prognosis][line][...][destination]
+                            # Cell 1: prognosis time (may be empty)
+                            if len(cells) > 1:
+                                prognosis_text = cells[1].get_text(strip=True)
+                                # Look for time in format "ca. HH:MM" or just "HH:MM"
+                                time_match = re.search(r'(\d{1,2}:\d{2})', prognosis_text)
+                                if time_match:
+                                    prognosis_time = time_match.group(1)
+                            
+                            # Cell 2 (sqProd): line/product
+                            line_cell_text = cells[2].get_text(strip=True)
+                            
+                            # Cell 5 (sqResultsTerminal): destination
+                            destination_text = cells[5].get_text(strip=True) if len(cells) >= 6 else 'Unknown'
                         
                         # Use prognosis time if available, otherwise scheduled time
                         display_time = prognosis_time if prognosis_time else time_str
                         
-                        # Cell 2 (sqProd): line/product
-                        line_cell_text = cells[2].get_text(strip=True)
-                        
-                        # For buses: extract just the number (e.g., "Bus    10" -> "10")
-                        # For trains: extract the letter (e.g., "B" -> "B")
+                        # Extract line: For buses "Bus 10", for trains "B", "A", etc.
                         bus_match = re.search(r'Bus\s+(\d+)', line_cell_text)
                         if bus_match:
                             line = bus_match.group(1)  # Extract number for buses
@@ -88,16 +114,6 @@ def fetch_train_departures():
                                 line = train_match.group(1)
                             else:
                                 continue
-                        
-                        # Determine destination based on number of cells
-                        # Trains have 6 cells, buses have 4 cells
-                        destination = 'Unknown'
-                        if len(cells) >= 6:
-                            # Train format: destination is in cell 5 (sqResultsTerminal)
-                            destination_text = cells[5].get_text(strip=True)
-                        elif len(cells) >= 4:
-                            # Bus format: destination is in cell 3 (sqResultsTerminal)
-                            destination_text = cells[3].get_text(strip=True)
                         
                         # Extract the first part before "Se alle stop" or similar
                         destination = destination_text.split('-')[0].strip()
