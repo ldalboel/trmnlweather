@@ -912,7 +912,7 @@
             }
 
             // Filter to show:
-            // 1. All-day events that haven't ended yet (end date >= today)
+            // 1. All-day events that haven't ended yet (end date >= today), even if they started before today
             // 2. Timed events that haven't passed yet (start time >= now)
             const now = new Date();
             const today = new Date(now);
@@ -920,7 +920,7 @@
             
             const futureEvents = events.filter(event => {
                 if (event.all_day) {
-                    // For all-day events, check if the end date hasn't passed
+                    // For all-day events, check if the end date hasn't passed (even if started before today)
                     const endDate = new Date(event.end);
                     endDate.setHours(0, 0, 0, 0);
                     return endDate >= today;
@@ -936,13 +936,17 @@
                 return;
             }
 
-            // Group events by date
+            // Group events by date, starting from today
             const eventsByDate = {};
             for (const event of futureEvents) {
-                const startDate = new Date(event.start);
-                
                 if (event.all_day) {
-                    // For all-day events, add to every day it spans
+                    // For all-day events, add to every day it spans, but start from today if it started before
+                    let startDate = new Date(event.start);
+                    // If the event started before today, start from today
+                    if (startDate < today) {
+                        startDate = new Date(today);
+                    }
+                    
                     const endDate = new Date(event.end);
                     endDate.setDate(endDate.getDate() - 1); // end date is exclusive, so subtract 1
                     
@@ -957,6 +961,7 @@
                     }
                 } else {
                     // For timed events, add only on the start date
+                    const startDate = new Date(event.start);
                     const dateKey = startDate.toLocaleDateString('sv-SE');
                     if (!eventsByDate[dateKey]) {
                         eventsByDate[dateKey] = [];
@@ -965,8 +970,15 @@
                 }
             }
 
-            // Sort dates
-            const sortedDates = Object.keys(eventsByDate).sort();
+            // Sort dates, starting with today
+            const todayKey = today.toLocaleDateString('sv-SE');
+            const sortedDates = Object.keys(eventsByDate).sort((a, b) => {
+                // Always put today first
+                if (a === todayKey) return -1;
+                if (b === todayKey) return 1;
+                // Then sort chronologically
+                return a.localeCompare(b);
+            });
 
             // Format dates in Danish and display - limit to 17 units
             const danishMonths = ['Januar', 'Februar', 'Marts', 'April', 'Maj', 'Juni', 'Juli', 'Augusti', 'September', 'Oktober', 'November', 'December'];
