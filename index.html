@@ -41,6 +41,10 @@
             gap: 0;
         }
 
+        .container.reversed {
+            flex-direction: row-reverse;
+        }
+
         /* Left column: Weather */
         .weather-column {
             flex: 0 0 50%;
@@ -828,6 +832,14 @@
         }
 
         // Fetch weather on page load
+        // Randomly alternate column layout on page load
+        (function() {
+            const shouldReverse = Math.random() < 0.5;
+            if (shouldReverse) {
+                document.querySelector('.container').classList.add('reversed');
+            }
+        })();
+
         fetchWeather();
 
         // Refresh every 30 minutes
@@ -1047,17 +1059,38 @@
         loadCalendarEvents();
     </script>
     <script>
-        // Version check to detect stale cached data
-        // Store the version in sessionStorage - if it changes, force reload
+        // ============================================================
+        // CACHE-BUSTING STRATEGY FOR GITHUB PAGES
+        // ============================================================
+        // Techniques implemented (from GitHub community discussion):
+        // 1. Query parameter versioning (?t=timestamp)
+        // 2. Force reload every 30 minutes (persistent across device restarts)
+        // 3. Cache-bust all AJAX calls with Date.now()
+        // 4. Meta tags + meta http-equiv refresh as fallback
+        // 5. localStorage for persistent cache tracking (survives tab close)
+        
         (function() {
-            const currentVersion = document.currentScript.parentElement.textContent;
-            const storedVersion = sessionStorage.getItem('pageVersion');
-            if (storedVersion && storedVersion !== currentVersion && navigator.onLine) {
-                // Data has changed, do a hard refresh bypassing cache
-                window.location.href = window.location.href.split('?')[0] + '?v=' + Date.now();
+            const CACHE_DURATION_MS = 30 * 60 * 1000; // 30 minutes max staleness
+            const pageGenerated = document.documentElement.getAttribute('data-generated') || new Date().toISOString();
+            
+            // Check localStorage (survives tab close, unlike sessionStorage)
+            const lastLoadTime = localStorage.getItem('pageLoadTime');
+            const lastPageVersion = localStorage.getItem('pageVersion');
+            const now = Date.now();
+            
+            // Store current page generation time for version comparison
+            localStorage.setItem('pageVersion', pageGenerated);
+            
+            if (lastLoadTime && (now - parseInt(lastLoadTime)) > CACHE_DURATION_MS) {
+                // More than 30 minutes have passed - force hard refresh
+                // Query parameter forces browser + CDN to bypass cache
+                localStorage.setItem('pageLoadTime', now.toString());
+                window.location.href = window.location.href.split('?')[0] + '?t=' + now;
                 return;
             }
-            sessionStorage.setItem('pageVersion', currentVersion);
+            
+            // Store current load time
+            localStorage.setItem('pageLoadTime', now.toString());
         })();
     </script>
     <script>
