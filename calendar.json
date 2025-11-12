@@ -1,5 +1,5 @@
 {
-  "updated": "2025-11-12T20:10:22.962661",
+  "updated": "2025-11-12T20:30:28.169564",
   "events": [
     {
       "title": "Lucas ferie",
@@ -29,6 +29,14 @@
       "title": "Husk at vaske inden d. 17. ",
       "start": "2025-11-14T08:00:00+01:00",
       "end": "2025-11-14T09:00:00+01:00",
+      "description": "",
+      "location": "",
+      "all_day": false
+    },
+    {
+      "title": "\u00c5bent hus andelsbolig \u00c5lekistevej 220B 2 th",
+      "start": "2025-11-16T10:00:00+01:00",
+      "end": "2025-11-16T11:00:00+01:00",
       "description": "",
       "location": "",
       "all_day": false
